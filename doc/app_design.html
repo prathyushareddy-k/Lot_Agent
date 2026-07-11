@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lot Agent — UI Design Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet"/>
+<style>
+/* ═══ TOKENS ══════════════════════════════════════════════════════════════ */
+:root {
+  --bg:           #05090f;
+  --frame:        #0b1220;
+  --s0:           #0f1c2e;
+  --s1:           #132233;
+  --s2:           #1a2d42;
+  --border:       #1e3048;
+  --border-light: #243a54;
+  --accent:       #2563eb;
+  --accent-soft:  rgba(37,99,235,.14);
+  --accent-glow:  rgba(37,99,235,.35);
+  --blue:         #3b82f6;
+  --cyan:         #06b6d4;
+  --green:        #10b981;
+  --green-soft:   rgba(16,185,129,.14);
+  --amber:        #f59e0b;
+  --amber-soft:   rgba(245,158,11,.14);
+  --red:          #ef4444;
+  --red-soft:     rgba(239,68,68,.14);
+  --t1:           #f0f6ff;
+  --t2:           #8ea8c3;
+  --t3:           #3d5a76;
+  --radius:       12px;
+  --radius-sm:    8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px;-webkit-font-smoothing:antialiased}
+body{
+  background:var(--bg);
+  color:var(--t1);
+  font-family:'Inter',sans-serif;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+/* ═══ PROTOTYPE NAV ═══════════════════════════════════════════════════════ */
+.proto-bar{
+  position:sticky;top:0;z-index:200;
+  width:100%;background:rgba(5,9,15,.92);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:0;
+  overflow-x:auto;padding:0 12px;
+  scrollbar-width:none;
+}
+.proto-bar::-webkit-scrollbar{display:none}
+.proto-badge{
+  font-size:9px;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--t3);
+  padding:0 14px 0 4px;white-space:nowrap;flex-shrink:0;
+  border-right:1px solid var(--border);margin-right:4px;
+}
+.proto-btn{
+  padding:12px 14px;font-size:11px;font-weight:500;
+  color:var(--t3);background:transparent;border:none;
+  cursor:pointer;white-space:nowrap;flex-shrink:0;
+  border-bottom:2px solid transparent;transition:all .15s;
+  letter-spacing:.01em;
+}
+.proto-btn:hover{color:var(--t2)}
+.proto-btn.active{color:var(--blue);border-bottom-color:var(--blue)}
+
+/* ═══ APP SHELL ═══════════════════════════════════════════════════════════ */
+.app{
+  width:100%;max-width:430px;
+  background:var(--frame);
+  min-height:calc(100vh - 42px);
+  display:flex;flex-direction:column;
+  border-left:1px solid var(--border);
+  border-right:1px solid var(--border);
+}
+.app-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 20px 14px;
+  border-bottom:1px solid var(--border);
+  position:sticky;top:42px;z-index:100;
+  background:var(--frame);
+}
+.logo{
+  font-size:15px;font-weight:800;letter-spacing:-.02em;
+  background:linear-gradient(135deg,#60a5fa,#818cf8);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.logo-dot{color:#3b82f6}
+.header-right{display:flex;align-items:center;gap:10px}
+.header-tag{
+  font-size:10px;font-weight:600;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--t3);
+  background:var(--s1);border:1px solid var(--border);
+  padding:3px 8px;border-radius:4px;
+}
+
+/* ═══ SHARED COMPONENTS ═══════════════════════════════════════════════════ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  padding:12px 22px;border-radius:var(--radius-sm);font-size:13px;
+  font-weight:600;cursor:pointer;border:none;transition:all .15s;
+  letter-spacing:.01em;
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--accent),#1d4ed8);
+  color:#fff;
+}
+.btn-primary:hover{
+  background:linear-gradient(135deg,var(--blue),var(--accent));
+  box-shadow:0 0 20px var(--accent-glow);
+}
+.btn-ghost{
+  background:var(--s1);color:var(--t2);
+  border:1px solid var(--border);
+}
+.btn-ghost:hover{background:var(--s2);color:var(--t1)}
+.btn-full{width:100%}
+.pill{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 9px;border-radius:20px;
+  font-size:10.5px;font-weight:600;letter-spacing:.03em;
+}
+.pill-green{background:var(--green-soft);color:var(--green)}
+.pill-amber{background:var(--amber-soft);color:var(--amber)}
+.pill-red{background:var(--red-soft);color:var(--red)}
+.pill-blue{background:var(--accent-soft);color:var(--blue)}
+
+.fit-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:46px;height:46px;border-radius:50%;
+  font-size:14px;font-weight:800;
+  border:2px solid;flex-shrink:0;
+}
+.fit-strong{color:#10b981;border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.08)}
+.fit-good{color:#f59e0b;border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.08)}
+.fit-fair{color:#94a3b8;border-color:rgba(148,163,184,.3);background:rgba(148,163,184,.06)}
+
+.card{
+  background:var(--s0);border:1px solid var(--border);
+  border-radius:var(--radius);padding:16px;
+}
+.screen{display:none;flex-direction:column;flex:1}
+.screen.active{display:flex}
+
+/* ═══ SCREEN 1 — LANDING ══════════════════════════════════════════════════ */
+#landing{
+  background:var(--frame);
+  padding:0;overflow:hidden;
+}
+.landing-hero{
+  padding:48px 24px 40px;
+  background:radial-gradient(ellipse 120% 60% at 50% 0%,rgba(37,99,235,.18),transparent);
+  text-align:center;
+}
+.landing-eyebrow{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--blue);background:var(--accent-soft);border:1px solid rgba(59,130,246,.2);
+  padding:4px 12px;border-radius:20px;margin-bottom:20px;
+}
+.landing-h1{
+  font-size:28px;font-weight:800;letter-spacing:-.03em;line-height:1.2;
+  color:var(--t1);margin-bottom:14px;
+}
+.landing-h1 span{
+  background:linear-gradient(135deg,#60a5fa,#a78bfa);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.landing-sub{
+  font-size:14px;color:var(--t2);line-height:1.6;margin-bottom:28px;max-width:320px;margin-left:auto;margin-right:auto;
+}
+.landing-cta{padding:14px 28px;font-size:14px;border-radius:10px}
+.landing-trust{
+  display:flex;align-items:center;justify-content:center;gap:16px;
+  margin-top:20px;font-size:11px;color:var(--t3);
+}
+.landing-trust-item{display:flex;align-items:center;gap:5px}
+.trust-dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+
+.how-it-works{
+  padding:28px 24px;
+  border-top:1px solid var(--border);
+}
+.section-label{
+  font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--t3);margin-bottom:20px;
+}
+.steps{display:flex;flex-direction:column;gap:0}
+.step{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:16px 0;
+  border-bottom:1px solid var(--border);
+}
+.step:last-child{border-bottom:none}
+.step-num{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--accent-soft);border:1px solid rgba(59,130,246,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:var(--blue);flex-shrink:0;
+}
+.step-body{}
+.step-title{font-size:13px;font-weight:600;color:var(--t1);margin-bottom:3px}
+.step-desc{font-size:12px;color:var(--t2);line-height:1.5}
+
+/* ═══ SCREEN 2 — INTAKE ═══════════════════════════════════════════════════ */
+.intake-wrap{padding:20px;flex:1;display:flex;flex-direction:column;gap:24px}
+.progress-row{display:flex;align-items:center;gap:12px}
+.back-btn{
+  width:30px;height:30px;border-radius:8px;
+  background:var(--s1);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--t2);font-size:14px;flex-shrink:0;
+}
+.progress-bar-wrap{flex:1;background:var(--s2);border-radius:4px;height:4px;overflow:hidden}
+.progress-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--cyan));transition:width .4s ease}
+.step-indicator{font-size:11px;color:var(--t3);flex-shrink:0}
+.intake-q{font-size:20px;font-weight:700;letter-spacing:-.02em;line-height:1.3;color:var(--t1)}
+.intake-sub{font-size:13px;color:var(--t2);margin-top:6px}
+
+.use-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.use-card{
+  background:var(--s0);border:1.5px solid var(--border);border-radius:var(--radius);
+  padding:18px 14px;cursor:pointer;transition:all .15s;text-align:center;
+}
+.use-card:hover,.use-card.selected{
+  border-color:var(--blue);background:var(--accent-soft);
+}
+.use-icon{font-size:26px;margin-bottom:8px}
+.use-label{font-size:13px;font-weight:600;color:var(--t1)}
+.use-desc{font-size:11px;color:var(--t2);margin-top:3px}
+
+.location-group{display:flex;flex-direction:column;gap:10px}
+.input-label{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--t3);margin-bottom:6px}
+.input-row{display:flex;gap:10px}
+.input-field{
+  flex:1;background:var(--s1);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:12px 14px;
+  font-size:13px;color:var(--t1);font-family:'Inter',sans-serif;
+  outline:none;transition:border-color .15s;
+}
+.input-field:focus{border-color:var(--blue)}
+.input-field::placeholder{color:var(--t3)}
+.input-sm{width:100px;flex:none}
+
+.budget-toggle{
+  display:flex;background:var(--s1);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:3px;gap:3px;
+}
+.toggle-opt{
+  flex:1;padding:9px;text-align:center;font-size:12px;font-weight:600;
+  border-radius:6px;cursor:pointer;color:var(--t3);transition:all .15s;
+}
+.toggle-opt.active{background:var(--s2);color:var(--t1);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+
+.budget-fields{display:flex;flex-direction:column;gap:10px}
+.input-group{display:flex;flex-direction:column}
+.input-prefix-wrap{position:relative}
+.input-prefix{
+  position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  font-size:13px;color:var(--t3);
+}
+.input-field.has-prefix{padding-left:24px}
+
+.pref-sliders{display:flex;flex-direction:column;gap:18px}
+.pref-row{display:flex;flex-direction:column;gap:8px}
+.pref-header{display:flex;justify-content:space-between;align-items:center}
+.pref-name{font-size:13px;font-weight:500;color:var(--t1)}
+.pref-val{font-size:12px;font-weight:700;color:var(--blue)}
+.slider{
+  -webkit-appearance:none;width:100%;height:4px;
+  border-radius:4px;outline:none;cursor:pointer;
+  background:var(--s2);
+}
+.slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;border-radius:50%;
+  background:var(--blue);cursor:pointer;
+  border:2px solid var(--frame);box-shadow:0 0 0 3px var(--accent-soft);
+}
+
+.toggles-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.toggle-chip{
+  display:flex;align-items:center;gap:9px;
+  background:var(--s0);border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);padding:11px 13px;cursor:pointer;
+  transition:all .15s;
+}
+.toggle-chip.on{border-color:var(--blue);background:var(--accent-soft)}
+.toggle-dot{
+  width:18px;height:18px;border-radius:50%;flex-shrink:0;
+  border:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;
+}
+.toggle-chip.on .toggle-dot{background:var(--blue);border-color:var(--blue);color:#fff}
+.toggle-text{font-size:12px;font-weight:500;color:var(--t2)}
+.toggle-chip.on .toggle-text{color:var(--t1)}
+
+.intake-footer{padding:20px;border-top:1px solid var(--border)}
+
+/* ═══ SCREEN 3 — SCANNING ═════════════════════════════════════════════════ */
+.scanning-wrap{
+  padding:32px 24px;flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:32px;
+}
+.scanning-title{text-align:center}
+.scanning-title h2{font-size:22px;font-weight:800;letter-spacing:-.02em;margin-bottom:8px}
+.scanning-title p{font-size:13px;color:var(--t2)}
+.scan-sources{
+  width:100%;display:flex;flex-direction:column;gap:0;
+  background:var(--s0);border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;
+}
+.src-row{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px;border-bottom:1px solid var(--border);
+}
+.src-row:last-child{border-bottom:none}
+.src-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.src-done{background:var(--green-soft)}
+.src-active{background:var(--accent-soft)}
+.src-wait{background:var(--s1)}
+.src-label{flex:1;font-size:13px;font-weight:500;color:var(--t1)}
+.src-count{font-size:12px;color:var(--t2)}
+.src-spinner{
+  width:16px;height:16px;border:2px solid var(--border);
+  border-top-color:var(--blue);border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.scan-progress-wrap{width:100%}
+.scan-pct{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.scan-pct-label{font-size:12px;color:var(--t2)}
+.scan-pct-num{font-size:12px;font-weight:700;color:var(--blue)}
+.scan-bar{height:6px;background:var(--s2);border-radius:4px;overflow:hidden}
+.scan-bar-fill{
+  height:100%;border-radius:4px;width:67%;
+  background:linear-gradient(90deg,var(--accent),var(--cyan));
+  position:relative;overflow:hidden;
+}
+.scan-bar-fill::after{
+  content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);
+  animation:shimmer 1.4s infinite;
+}
+@keyframes shimmer{to{left:200%}}
+
+/* ═══ SCREEN 4 — SHORTLIST ════════════════════════════════════════════════ */
+.shortlist-header{
+  padding:14px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.shortlist-title{font-size:16px;font-weight:700}
+.watch-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--t2)}
+.watch-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.compare-bar{
+  padding:10px 20px;background:var(--s1);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.compare-bar p{font-size:12px;color:var(--t2)}
+.compare-bar span{font-weight:600;color:var(--t1)}
+.btn-sm{padding:7px 14px;font-size:11px;border-radius:6px}
+
+.car-list{padding:16px 16px;display:flex;flex-direction:column;gap:12px;flex:1}
+.car-card{
+  background:var(--s0);border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;cursor:pointer;transition:all .15s;
+}
+.car-card:hover{border-color:var(--border-light);transform:translateY(-1px)}
+.car-card-inner{padding:14px}
+.car-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px}
+.car-info{flex:1}
+.car-name{font-size:14px;font-weight:700;color:var(--t1);margin-bottom:3px;letter-spacing:-.01em}
+.car-meta{font-size:11.5px;color:var(--t2)}
+.car-check{
+  width:22px;height:22px;border-radius:6px;
+  border:1.5px solid var(--border);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;cursor:pointer;transition:all .15s;
+}
+.car-check.checked{background:var(--accent-soft);border-color:var(--blue);color:var(--blue)}
+.car-bottom{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tco{font-size:12px;font-weight:700;color:var(--t1);margin-left:auto}
+.tco span{font-size:10.5px;font-weight:400;color:var(--t2)}
+.car-expand{
+  padding:10px 14px;border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:11.5px;color:var(--t2);
+}
+.car-expand span{color:var(--blue)}
+
+/* ═══ SCREEN 5 — LISTING DETAIL ═══════════════════════════════════════════ */
+.detail-scroll{padding:0;flex:1;overflow-y:auto;display:flex;flex-direction:column}
+.detail-hero{
+  padding:20px;
+  background:linear-gradient(180deg,rgba(37,99,235,.08),transparent);
+  border-bottom:1px solid var(--border);
+}
+.detail-back{
+  display:flex;align-items:center;gap:6px;font-size:12px;color:var(--t2);
+  cursor:pointer;margin-bottom:14px;
+}
+.detail-name{font-size:20px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
+.detail-sub{font-size:12px;color:var(--t2);margin-bottom:14px}
+.detail-price-row{display:flex;align-items:flex-end;gap:14px;margin-bottom:14px}
+.detail-price{font-size:26px;font-weight:800;color:var(--t1)}
+.detail-tco{font-size:12px;color:var(--t2);padding-bottom:3px}
+.detail-tags{display:flex;gap:8px;flex-wrap:wrap}
+
+.detail-section{padding:18px 20px;border-bottom:1px solid var(--border)}
+.section-title{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--t3);margin-bottom:14px}
+
+.tradeoff-bars{display:flex;flex-direction:column;gap:12px}
+.tb-row{display:flex;flex-direction:column;gap:5px}
+.tb-header{display:flex;justify-content:space-between;align-items:center}
+.tb-name{font-size:12px;font-weight:500;color:var(--t1)}
+.tb-score{font-size:12px;font-weight:700}
+.tb-bar{height:5px;background:var(--s2);border-radius:4px;overflow:hidden}
+.tb-fill{height:100%;border-radius:4px;transition:width .5s ease}
+.tb-note{font-size:11px;color:var(--t2)}
+
+.honest-box{
+  background:var(--amber-soft);border:1px solid rgba(245,158,11,.25);
+  border-radius:var(--radius-sm);padding:12px 14px;
+  display:flex;gap:10px;align-items:flex-start;
+}
+.honest-icon{font-size:14px;flex-shrink:0;margin-top:1px}
+.honest-text{font-size:12px;color:var(--t2);line-height:1.5}
+
+.specs-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.spec-cell{padding:10px 12px;border-bottom:1px solid var(--border);border-right:1px solid var(--border)}
+.spec-cell:nth-child(even){border-right:none}
+.spec-cell:nth-last-child(-n+2){border-bottom:none}
+.spec-key{font-size:10.5px;color:var(--t3);margin-bottom:2px}
+.spec-val{font-size:12px;font-weight:600;color:var(--t1)}
+
+.deal-judge-box{
+  background:var(--s1);border:1.5px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;
+}
+.dj-header{
+  padding:12px 16px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.dj-title{font-size:12px;font-weight:700;color:var(--t3);letter-spacing:.05em;text-transform:uppercase}
+.dj-body{padding:16px}
+.dj-price-row{display:flex;gap:14px;margin-bottom:16px}
+.dj-price-col{flex:1;text-align:center;padding:10px;background:var(--s0);border-radius:var(--radius-sm);border:1px solid var(--border)}
+.dj-price-label{font-size:10px;color:var(--t3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.dj-price-val{font-size:17px;font-weight:800;color:var(--t1)}
+.dj-price-col.delta .dj-price-val{color:var(--green)}
+.dj-comps{font-size:11.5px;color:var(--t2);margin-bottom:12px;text-align:center}
+.dj-headroom{
+  background:var(--accent-soft);border:1px solid rgba(37,99,235,.2);
+  border-radius:var(--radius-sm);padding:10px 14px;text-align:center;
+}
+.dj-headroom-label{font-size:10px;color:var(--t2);margin-bottom:4px}
+.dj-headroom-val{font-size:15px;font-weight:700;color:var(--blue)}
+
+.detail-cta{padding:20px;border-top:1px solid var(--border);background:var(--frame);position:sticky;bottom:0}
+
+/* ═══ SCREEN 6 — DEAL PACKET ══════════════════════════════════════════════ */
+.packet-scroll{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px}
+.packet-header{
+  padding:16px 20px;border-bottom:1px solid var(--border);
+}
+.packet-header h2{font-size:15px;font-weight:700;margin-bottom:2px}
+.packet-header p{font-size:12px;color:var(--t2)}
+
+.packet-section{
+  background:var(--s0);border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;
+}
+.packet-sec-header{
+  padding:12px 16px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:9px;
+  background:var(--s1);
+}
+.packet-sec-icon{
+  width:26px;height:26px;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;font-size:13px;
+  flex-shrink:0;
+}
+.packet-sec-title{font-size:12px;font-weight:700;color:var(--t1)}
+
+.worksheet-rows{padding:4px 0}
+.ws-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.03);
+  font-size:12.5px;
+}
+.ws-row:last-child{border-bottom:none}
+.ws-label{color:var(--t2)}
+.ws-val{font-weight:600;color:var(--t1)}
+.ws-row.total{
+  background:var(--s1);border-top:1px solid var(--border);
+  padding:12px 16px;
+}
+.ws-row.total .ws-label{font-weight:700;color:var(--t1)}
+.ws-row.total .ws-val{font-size:15px;color:var(--green)}
+
+.script-body{padding:16px;display:flex;flex-direction:column;gap:10px}
+.script-price-row{
+  display:flex;align-items:center;gap:12px;
+  background:var(--s1);border-radius:var(--radius-sm);border:1px solid var(--border);
+  padding:12px 14px;
+}
+.script-price-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.script-price-col{flex:1}
+.script-price-tag{font-size:10px;color:var(--t3);margin-bottom:2px;text-transform:uppercase;letter-spacing:.05em}
+.script-price-val{font-size:16px;font-weight:800;color:var(--t1)}
+.script-phrasing{
+  background:rgba(255,255,255,.02);border-radius:var(--radius-sm);
+  border-left:3px solid var(--border-light);padding:10px 12px;
+  font-size:12px;color:var(--t2);line-height:1.6;font-style:italic;
+}
+
+.checklist{padding:8px 0}
+.check-item{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.03);
+}
+.check-item:last-child{border-bottom:none}
+.check-box{
+  width:18px;height:18px;border-radius:5px;
+  border:1.5px solid var(--border-light);flex-shrink:0;margin-top:1px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:all .15s;
+}
+.check-box.done{background:var(--green-soft);border-color:var(--green);color:var(--green)}
+.check-text{font-size:12px;color:var(--t1);line-height:1.4}
+.check-text small{display:block;font-size:11px;color:var(--t3);margin-top:2px}
+
+.outreach-body{padding:16px}
+.outreach-msg{
+  background:var(--s1);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:14px;font-size:12.5px;line-height:1.7;color:var(--t2);margin-bottom:12px;
+}
+.outreach-msg strong{color:var(--t1)}
+.copy-btn{
+  display:flex;align-items:center;gap:7px;
+  background:var(--s2);border:1px solid var(--border);border-radius:7px;
+  padding:9px 14px;font-size:12px;font-weight:600;color:var(--t1);
+  cursor:pointer;width:100%;justify-content:center;
+  transition:all .15s;
+}
+.copy-btn:hover{background:var(--s2);border-color:var(--border-light)}
+</style>
+</head>
+<body>
+
+<!-- ── PROTOTYPE NAV ──────────────────────────────────────────────────── -->
+<div class="proto-bar">
+  <span class="proto-badge">Design Prototype</span>
+  <button class="proto-btn active" onclick="showScreen('landing',this)">Landing</button>
+  <button class="proto-btn" onclick="showScreen('intake-use',this)">Intake · Use</button>
+  <button class="proto-btn" onclick="showScreen('intake-budget',this)">Intake · Budget</button>
+  <button class="proto-btn" onclick="showScreen('intake-prefs',this)">Intake · Prefs</button>
+  <button class="proto-btn" onclick="showScreen('scanning',this)">Scanning</button>
+  <button class="proto-btn" onclick="showScreen('shortlist',this)">Shortlist</button>
+  <button class="proto-btn" onclick="showScreen('listing-detail',this)">Listing Detail</button>
+  <button class="proto-btn" onclick="showScreen('deal-packet',this)">Deal Packet</button>
+</div>
+
+<!-- ── APP SHELL ─────────────────────────────────────────────────────── -->
+<div class="app">
+  <div class="app-header">
+    <div class="logo">lot<span class="logo-dot">·</span>agent</div>
+    <div class="header-right">
+      <span class="header-tag" id="screenTag">Landing</span>
+    </div>
+  </div>
+
+  <!-- ════════════════════ SCREEN 1 — LANDING ════════════════════ -->
+  <div class="screen active" id="screen-landing">
+    <div class="landing-hero">
+      <div class="landing-eyebrow">✦ AI-powered car buying</div>
+      <h1 class="landing-h1">From "I need a car"<br/>to your <span>negotiation packet.</span></h1>
+      <p class="landing-sub">Your agent watches the market, ranks what fits you, and tells you exactly what to offer — backed by real comps.</p>
+      <button class="btn btn-primary landing-cta" onclick="showScreen('intake-use', document.querySelectorAll('.proto-btn')[1])">Start — answer a few questions →</button>
+      <div class="landing-trust">
+        <div class="landing-trust-item"><div class="trust-dot"></div>No account needed</div>
+        <div class="landing-trust-item"><div class="trust-dot"></div>5 min intake</div>
+        <div class="landing-trust-item"><div class="trust-dot"></div>Explainable scores</div>
+      </div>
+    </div>
+    <div class="how-it-works">
+      <div class="section-label">How it works</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Answer a few questions</div>
+            <div class="step-desc">Tell us your use case, budget, and what matters most. Takes 5 minutes.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Agent watches the market</div>
+            <div class="step-desc">We scan dealer inventory, private listings, and 30-day comp sales — then rank by fit and deal quality.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">Get your negotiation packet</div>
+            <div class="step-desc">Offer worksheet, word-for-word negotiation script, test-drive checklist, and an outreach message — ready to use.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ SCREEN 2 — INTAKE: USE ════════════════ -->
+  <div class="screen" id="screen-intake-use">
+    <div class="intake-wrap">
+      <div class="progress-row">
+        <div class="back-btn">←</div>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:14%"></div></div>
+        <div class="step-indicator">1 / 7</div>
+      </div>
+      <div>
+        <div class="intake-q">What will you primarily use this car for?</div>
+        <div class="intake-sub">This shapes how we weight reliability, cargo space, and running cost.</div>
+      </div>
+      <div class="use-options">
+        <div class="use-card selected" onclick="selectUse(this)">
+          <div class="use-icon">🛣️</div>
+          <div class="use-label">Commute</div>
+          <div class="use-desc">Daily city or highway driving</div>
+        </div>
+        <div class="use-card" onclick="selectUse(this)">
+          <div class="use-icon">👨‍👩‍👧‍👦</div>
+          <div class="use-label">Family</div>
+          <div class="use-desc">Space, safety, practicality</div>
+        </div>
+        <div class="use-card" onclick="selectUse(this)">
+          <div class="use-icon">🏎️</div>
+          <div class="use-label">Weekend</div>
+          <div class="use-desc">Fun drives, road trips</div>
+        </div>
+        <div class="use-card" onclick="selectUse(this)">
+          <div class="use-icon">🎓</div>
+          <div class="use-label">First Car</div>
+          <div class="use-desc">Reliable, easy to own</div>
+        </div>
+      </div>
+    </div>
+    <div class="intake-footer">
+      <button class="btn btn-primary btn-full" onclick="showScreen('intake-budget', document.querySelectorAll('.proto-btn')[2])">Next →</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════ SCREEN 3 — INTAKE: BUDGET ════════════ -->
+  <div class="screen" id="screen-intake-budget">
+    <div class="intake-wrap">
+      <div class="progress-row">
+        <div class="back-btn" onclick="showScreen('intake-use', document.querySelectorAll('.proto-btn')[1])">←</div>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:43%"></div></div>
+        <div class="step-indicator">3 / 7</div>
+      </div>
+      <div>
+        <div class="intake-q">What's your budget?</div>
+        <div class="intake-sub">We'll filter and rank listings to fit your real numbers.</div>
+      </div>
+      <div>
+        <div class="budget-toggle">
+          <div class="toggle-opt active" onclick="setBudgetMode(this,'monthly')">Monthly payment</div>
+          <div class="toggle-opt" onclick="setBudgetMode(this,'cash')">Cash total</div>
+        </div>
+      </div>
+      <div class="budget-fields" id="monthlyFields">
+        <div class="input-group">
+          <div class="input-label">Monthly payment</div>
+          <div class="input-prefix-wrap">
+            <span class="input-prefix">$</span>
+            <input class="input-field has-prefix" type="number" placeholder="700" value="700"/>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="input-group" style="flex:1">
+            <div class="input-label">Down payment</div>
+            <div class="input-prefix-wrap">
+              <span class="input-prefix">$</span>
+              <input class="input-field has-prefix" type="number" placeholder="3000" value="3000"/>
+            </div>
+          </div>
+          <div class="input-group" style="flex:1">
+            <div class="input-label">Loan term</div>
+            <select class="input-field" style="cursor:pointer">
+              <option>36 months</option>
+              <option>48 months</option>
+              <option selected>60 months</option>
+              <option>72 months</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="budget-fields" id="cashFields" style="display:none">
+        <div class="input-group">
+          <div class="input-label">Total cash budget</div>
+          <div class="input-prefix-wrap">
+            <span class="input-prefix">$</span>
+            <input class="input-field has-prefix" type="number" placeholder="25000"/>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="input-label">Search area</div>
+        <div class="input-row">
+          <input class="input-field" placeholder="ZIP code" value="78701" style="flex:1"/>
+          <select class="input-field input-sm">
+            <option>15 mi</option>
+            <option selected>25 mi</option>
+            <option>50 mi</option>
+            <option>100 mi</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="intake-footer">
+      <button class="btn btn-primary btn-full" onclick="showScreen('intake-prefs', document.querySelectorAll('.proto-btn')[3])">Next →</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════ SCREEN 4 — INTAKE: PREFS ══════════════ -->
+  <div class="screen" id="screen-intake-prefs">
+    <div class="intake-wrap">
+      <div class="progress-row">
+        <div class="back-btn" onclick="showScreen('intake-budget', document.querySelectorAll('.proto-btn')[2])">←</div>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:71%"></div></div>
+        <div class="step-indicator">5 / 7</div>
+      </div>
+      <div>
+        <div class="intake-q">What matters most to you?</div>
+        <div class="intake-sub">Drag the sliders to weight your priorities. These drive your Fit Score.</div>
+      </div>
+      <div class="pref-sliders">
+        <div class="pref-row">
+          <div class="pref-header"><span class="pref-name">🛡️ Reliability</span><span class="pref-val" id="v-rel">90</span></div>
+          <input class="slider" type="range" min="0" max="100" value="90" oninput="document.getElementById('v-rel').textContent=this.value"/>
+        </div>
+        <div class="pref-row">
+          <div class="pref-header"><span class="pref-name">📈 Resale value</span><span class="pref-val" id="v-res">70</span></div>
+          <input class="slider" type="range" min="0" max="100" value="70" oninput="document.getElementById('v-res').textContent=this.value"/>
+        </div>
+        <div class="pref-row">
+          <div class="pref-header"><span class="pref-name">⛽ Running cost</span><span class="pref-val" id="v-run">60</span></div>
+          <input class="slider" type="range" min="0" max="100" value="60" oninput="document.getElementById('v-run').textContent=this.value"/>
+        </div>
+        <div class="pref-row">
+          <div class="pref-header"><span class="pref-name">🏁 Performance</span><span class="pref-val" id="v-perf">40</span></div>
+          <input class="slider" type="range" min="0" max="100" value="40" oninput="document.getElementById('v-perf').textContent=this.value"/>
+        </div>
+      </div>
+      <div>
+        <div class="intake-sub" style="margin-bottom:12px;font-weight:600;color:var(--t1)">Must-haves</div>
+        <div class="toggles-grid">
+          <div class="toggle-chip" onclick="this.classList.toggle('on')">
+            <div class="toggle-dot">✓</div><span class="toggle-text">AWD / 4WD</span>
+          </div>
+          <div class="toggle-chip on" onclick="this.classList.toggle('on')">
+            <div class="toggle-dot">✓</div><span class="toggle-text">Apple CarPlay</span>
+          </div>
+          <div class="toggle-chip on" onclick="this.classList.toggle('on')">
+            <div class="toggle-dot">✓</div><span class="toggle-text">Backup camera</span>
+          </div>
+          <div class="toggle-chip" onclick="this.classList.toggle('on')">
+            <div class="toggle-dot">✓</div><span class="toggle-text">35+ MPG</span>
+          </div>
+          <div class="toggle-chip" onclick="this.classList.toggle('on')">
+            <div class="toggle-dot">✓</div><span class="toggle-text">Third row</span>
+          </div>
+          <div class="toggle-chip" onclick="this.classList.toggle('on')">
+            <div class="toggle-dot">✓</div><span class="toggle-text">Manual trans.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="intake-footer">
+      <button class="btn btn-primary btn-full" onclick="showScreen('scanning', document.querySelectorAll('.proto-btn')[4])">Find my car →</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════ SCREEN 5 — SCANNING ══════════════════ -->
+  <div class="screen" id="screen-scanning">
+    <div class="scanning-wrap">
+      <div class="scanning-title">
+        <h2>Scanning the market…</h2>
+        <p>Checking 6 sources for listings that match your profile</p>
+      </div>
+      <div class="scan-sources">
+        <div class="src-row">
+          <div class="src-icon src-done">✓</div>
+          <span class="src-label">Franchise dealer inventory</span>
+          <span class="src-count" style="color:var(--green)">843 listings</span>
+        </div>
+        <div class="src-row">
+          <div class="src-icon src-done">✓</div>
+          <span class="src-label">Independent dealers</span>
+          <span class="src-count" style="color:var(--green)">412 listings</span>
+        </div>
+        <div class="src-row">
+          <div class="src-icon src-active">↺</div>
+          <span class="src-label">Private party listings</span>
+          <div class="src-spinner"></div>
+        </div>
+        <div class="src-row" style="opacity:.45">
+          <div class="src-icon src-wait">·</div>
+          <span class="src-label">CPO inventory</span>
+          <span class="src-count">waiting</span>
+        </div>
+        <div class="src-row" style="opacity:.45">
+          <div class="src-icon src-wait">·</div>
+          <span class="src-label">30-day comparable sales</span>
+          <span class="src-count">waiting</span>
+        </div>
+        <div class="src-row" style="opacity:.45">
+          <div class="src-icon src-wait">·</div>
+          <span class="src-label">Recalls &amp; safety data</span>
+          <span class="src-count">waiting</span>
+        </div>
+      </div>
+      <div class="scan-progress-wrap">
+        <div class="scan-pct">
+          <span class="scan-pct-label">Scanning 1,255 listings matched to your profile</span>
+          <span class="scan-pct-num">67%</span>
+        </div>
+        <div class="scan-bar"><div class="scan-bar-fill"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ SCREEN 6 — SHORTLIST ═════════════════ -->
+  <div class="screen" id="screen-shortlist">
+    <div class="shortlist-header">
+      <div class="shortlist-title">Your Shortlist</div>
+      <div class="watch-status">
+        <div class="watch-dot"></div>
+        Agent watching · 4 min ago
+      </div>
+    </div>
+    <div class="compare-bar">
+      <p><span>2</span> cars selected for comparison</p>
+      <button class="btn btn-ghost btn-sm">Compare →</button>
+    </div>
+    <div class="car-list">
+
+      <!-- Car 1 -->
+      <div class="car-card" onclick="showScreen('listing-detail', document.querySelectorAll('.proto-btn')[6])">
+        <div class="car-card-inner">
+          <div class="car-top">
+            <div class="fit-badge fit-strong">92</div>
+            <div class="car-info">
+              <div class="car-name">2022 Honda CR-V EX</div>
+              <div class="car-meta">28,400 mi · Johnson Honda · 12 mi away</div>
+            </div>
+            <div class="car-check checked" onclick="event.stopPropagation()">✓</div>
+          </div>
+          <div class="car-bottom">
+            <span class="pill pill-green">● Good deal</span>
+            <span class="pill pill-blue">Used</span>
+            <span class="tco">$847<span>/mo TCO</span></span>
+          </div>
+        </div>
+        <div class="car-expand"><span>View details & Deal Judge</span> <span>›</span></div>
+      </div>
+
+      <!-- Car 2 -->
+      <div class="car-card">
+        <div class="car-card-inner">
+          <div class="car-top">
+            <div class="fit-badge fit-good">87</div>
+            <div class="car-info">
+              <div class="car-name">2021 Toyota RAV4 XLE</div>
+              <div class="car-meta">35,200 mi · AutoNation Toyota · 8 mi away</div>
+            </div>
+            <div class="car-check checked" onclick="event.stopPropagation()">✓</div>
+          </div>
+          <div class="car-bottom">
+            <span class="pill pill-amber">● Fair price</span>
+            <span class="pill pill-blue">Used</span>
+            <span class="tco">$891<span>/mo TCO</span></span>
+          </div>
+        </div>
+        <div class="car-expand"><span>View details & Deal Judge</span> <span>›</span></div>
+      </div>
+
+      <!-- Car 3 -->
+      <div class="car-card">
+        <div class="car-card-inner">
+          <div class="car-top">
+            <div class="fit-badge fit-good">79</div>
+            <div class="car-info">
+              <div class="car-name">2023 Mazda CX-5 GT</div>
+              <div class="car-meta">14,600 mi · Mazda of Austin · 22 mi away</div>
+            </div>
+            <div class="car-check" onclick="event.stopPropagation()">·</div>
+          </div>
+          <div class="car-bottom">
+            <span class="pill pill-green">● Good deal</span>
+            <span class="pill" style="background:rgba(6,182,212,.1);color:#06b6d4">CPO</span>
+            <span class="tco">$934<span>/mo TCO</span></span>
+          </div>
+        </div>
+        <div class="car-expand"><span>View details & Deal Judge</span> <span>›</span></div>
+      </div>
+
+      <!-- Car 4 -->
+      <div class="car-card">
+        <div class="car-card-inner">
+          <div class="car-top">
+            <div class="fit-badge fit-fair">73</div>
+            <div class="car-info">
+              <div class="car-name">2020 Subaru Forester</div>
+              <div class="car-meta">41,800 mi · CarMax North · 15 mi away</div>
+            </div>
+            <div class="car-check" onclick="event.stopPropagation()">·</div>
+          </div>
+          <div class="car-bottom">
+            <span class="pill pill-red">● Overpriced</span>
+            <span class="pill pill-blue">Used</span>
+            <span class="tco">$812<span>/mo TCO</span></span>
+          </div>
+        </div>
+        <div class="car-expand"><span>View details & Deal Judge</span> <span>›</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════ SCREEN 7 — LISTING DETAIL ════════════ -->
+  <div class="screen" id="screen-listing-detail" style="overflow:hidden">
+    <div class="detail-scroll">
+      <div class="detail-hero">
+        <div class="detail-back" onclick="showScreen('shortlist', document.querySelectorAll('.proto-btn')[5])">← Back to shortlist</div>
+        <div class="detail-name">2022 Honda CR-V EX</div>
+        <div class="detail-sub">Johnson Honda · 12 mi away · VIN: 7FARW2H53NE012345</div>
+        <div class="detail-price-row">
+          <div class="detail-price">$24,900</div>
+          <div class="detail-tco">$847/mo total cost of ownership</div>
+        </div>
+        <div class="detail-tags">
+          <span class="pill pill-green">92 Fit Score</span>
+          <span class="pill pill-green">● Good deal</span>
+          <span class="pill pill-blue">Used · 28,400 mi</span>
+        </div>
+      </div>
+
+      <!-- Tradeoff bars -->
+      <div class="detail-section">
+        <div class="section-title">How it matches your priorities</div>
+        <div class="tradeoff-bars">
+          <div class="tb-row">
+            <div class="tb-header">
+              <span class="tb-name">🛡️ Reliability</span>
+              <span class="tb-score" style="color:var(--green)">94 / 100</span>
+            </div>
+            <div class="tb-bar"><div class="tb-fill" style="width:94%;background:var(--green)"></div></div>
+            <div class="tb-note">CR-V ranked #2 in compact SUV reliability by Consumer Reports 2022.</div>
+          </div>
+          <div class="tb-row">
+            <div class="tb-header">
+              <span class="tb-name">📈 Resale value</span>
+              <span class="tb-score" style="color:var(--green)">88 / 100</span>
+            </div>
+            <div class="tb-bar"><div class="tb-fill" style="width:88%;background:var(--green)"></div></div>
+            <div class="tb-note">Retains ~54% of value at 5 years — above class average of 47%.</div>
+          </div>
+          <div class="tb-row">
+            <div class="tb-header">
+              <span class="tb-name">⛽ Running cost</span>
+              <span class="tb-score" style="color:var(--amber)">72 / 100</span>
+            </div>
+            <div class="tb-bar"><div class="tb-fill" style="width:72%;background:var(--amber)"></div></div>
+            <div class="tb-note">31 mpg combined. Annual fuel cost ~$1,820 at current prices.</div>
+          </div>
+          <div class="tb-row">
+            <div class="tb-header">
+              <span class="tb-name">🏁 Performance</span>
+              <span class="tb-score" style="color:var(--t3)">55 / 100</span>
+            </div>
+            <div class="tb-bar"><div class="tb-fill" style="width:55%;background:var(--t3)"></div></div>
+            <div class="tb-note">1.5L turbo — adequate for commuting, not sporty.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Honest tradeoff -->
+      <div class="detail-section">
+        <div class="section-title">Honest tradeoff</div>
+        <div class="honest-box">
+          <span class="honest-icon">⚠️</span>
+          <div class="honest-text">Running cost doesn't fully hit your target. At 31 mpg, fuel costs are ~$220/year higher than a comparable hybrid. If running cost is important, the RAV4 Hybrid is worth comparing.</div>
+        </div>
+      </div>
+
+      <!-- Specs grid -->
+      <div class="detail-section">
+        <div class="section-title">Specs &amp; history</div>
+        <div class="specs-grid">
+          <div class="spec-cell"><div class="spec-key">Year</div><div class="spec-val">2022</div></div>
+          <div class="spec-cell"><div class="spec-key">Mileage</div><div class="spec-val">28,400 mi</div></div>
+          <div class="spec-cell"><div class="spec-key">Engine</div><div class="spec-val">1.5L Turbo</div></div>
+          <div class="spec-cell"><div class="spec-key">MPG</div><div class="spec-val">28 city / 34 hwy</div></div>
+          <div class="spec-cell"><div class="spec-key">Drivetrain</div><div class="spec-val">FWD</div></div>
+          <div class="spec-cell"><div class="spec-key">Accidents</div><div class="spec-val">0 reported</div></div>
+          <div class="spec-cell"><div class="spec-key">Owners</div><div class="spec-val">1 prior owner</div></div>
+          <div class="spec-cell"><div class="spec-key">NHTSA safety</div><div class="spec-val">★★★★★</div></div>
+          <div class="spec-cell"><div class="spec-key">Open recalls</div><div class="spec-val">None</div></div>
+          <div class="spec-cell"><div class="spec-key">CarPlay</div><div class="spec-val">Yes ✓</div></div>
+        </div>
+      </div>
+
+      <!-- Deal Judge -->
+      <div class="detail-section">
+        <div class="section-title">Deal Judge</div>
+        <div class="deal-judge-box">
+          <div class="dj-header">
+            <span class="dj-title">Market Analysis</span>
+            <span class="pill pill-green">● Good deal</span>
+          </div>
+          <div class="dj-body">
+            <div class="dj-price-row">
+              <div class="dj-price-col">
+                <div class="dj-price-label">Asking price</div>
+                <div class="dj-price-val">$24,900</div>
+              </div>
+              <div class="dj-price-col">
+                <div class="dj-price-label">Comp avg</div>
+                <div class="dj-price-val">$25,800</div>
+              </div>
+              <div class="dj-price-col delta">
+                <div class="dj-price-label">Below avg</div>
+                <div class="dj-price-val">$900</div>
+              </div>
+            </div>
+            <div class="dj-comps">Based on <strong style="color:var(--t1)">14 comparable sales</strong> in the last 30 days within 50 mi</div>
+            <div class="dj-headroom">
+              <div class="dj-headroom-label">Estimated negotiation headroom</div>
+              <div class="dj-headroom-val">$400 – $900</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="detail-cta">
+      <button class="btn btn-primary btn-full" onclick="showScreen('deal-packet', document.querySelectorAll('.proto-btn')[7])">Make this a finalist — generate Deal Packet →</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════ SCREEN 8 — DEAL PACKET ═══════════════ -->
+  <div class="screen" id="screen-deal-packet" style="overflow:hidden">
+    <div class="packet-header">
+      <div class="detail-back" onclick="showScreen('listing-detail', document.querySelectorAll('.proto-btn')[6])">← 2022 Honda CR-V EX</div>
+      <h2>Deal Packet</h2>
+      <p>Ready to negotiate — everything you need in one place</p>
+    </div>
+    <div class="packet-scroll">
+
+      <!-- Offer Worksheet -->
+      <div class="packet-section">
+        <div class="packet-sec-header">
+          <div class="packet-sec-icon" style="background:var(--accent-soft)">📋</div>
+          <span class="packet-sec-title">Offer Worksheet</span>
+        </div>
+        <div class="worksheet-rows">
+          <div class="ws-row"><span class="ws-label">Vehicle price</span><span class="ws-val">$24,900</span></div>
+          <div class="ws-row"><span class="ws-label">Documentation fee</span><span class="ws-val">$125</span></div>
+          <div class="ws-row"><span class="ws-label">Title &amp; registration</span><span class="ws-val">$350</span></div>
+          <div class="ws-row"><span class="ws-label">State tax (8.25%)</span><span class="ws-val">$2,055</span></div>
+          <div class="ws-row total"><span class="ws-label">Out-the-door total</span><span class="ws-val">$27,430</span></div>
+        </div>
+      </div>
+
+      <!-- Negotiation Script -->
+      <div class="packet-section">
+        <div class="packet-sec-header">
+          <div class="packet-sec-icon" style="background:var(--green-soft)">🎯</div>
+          <span class="packet-sec-title">Negotiation Script</span>
+        </div>
+        <div class="script-body">
+          <div class="script-price-row">
+            <div class="script-price-dot" style="background:var(--blue)"></div>
+            <div class="script-price-col">
+              <div class="script-price-tag">Open at</div>
+              <div class="script-price-val">$23,500</div>
+            </div>
+          </div>
+          <div class="script-phrasing">"Based on 14 comparable CR-Vs that sold in the last 30 days nearby, the market average is $25,800. I'd like to start at $23,500 and work from there."</div>
+          <div class="script-price-row">
+            <div class="script-price-dot" style="background:var(--amber)"></div>
+            <div class="script-price-col">
+              <div class="script-price-tag">Settle near</div>
+              <div class="script-price-val">$24,200</div>
+            </div>
+          </div>
+          <div class="script-phrasing">"I can do $24,200 today — that's fair for both of us given the market data I'm looking at."</div>
+          <div class="script-price-row">
+            <div class="script-price-dot" style="background:var(--red)"></div>
+            <div class="script-price-col">
+              <div class="script-price-tag">Walk away at</div>
+              <div class="script-price-val">$24,700</div>
+            </div>
+          </div>
+          <div class="script-phrasing">"If we can't get to $24,700 or below, I need to pass — I have two other listings I'm evaluating."</div>
+          <div class="honest-box" style="margin-top:4px">
+            <span class="honest-icon">💡</span>
+            <div class="honest-text">Decide your walk-away number <em>before</em> you walk in. Sellers are trained to create urgency — knowing your number in advance means you won't be pressured past it.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Test Drive Checklist -->
+      <div class="packet-section">
+        <div class="packet-sec-header">
+          <div class="packet-sec-icon" style="background:var(--amber-soft)">🔍</div>
+          <span class="packet-sec-title">Test Drive Checklist</span>
+        </div>
+        <div class="checklist">
+          <div class="check-item"><div class="check-box done" onclick="this.classList.toggle('done')">✓</div><div class="check-text">Check for oil leaks under the car before starting<small>Known issue on 2019–2021 CR-Vs; fixed on 2022 but worth verifying</small></div></div>
+          <div class="check-item"><div class="check-box" onclick="this.classList.toggle('done')">✓</div><div class="check-text">Verify CarPlay / Android Auto connects cleanly<small>Confirm both USB-A and USB-C ports work</small></div></div>
+          <div class="check-item"><div class="check-box" onclick="this.classList.toggle('done')">✓</div><div class="check-text">Test backup camera clarity and guidelines</div></div>
+          <div class="check-item"><div class="check-box" onclick="this.classList.toggle('done')">✓</div><div class="check-text">Check lane-keep assist and ACC on highway<small>Honda Sensing suite — verify no warning lights</small></div></div>
+          <div class="check-item"><div class="check-box" onclick="this.classList.toggle('done')">✓</div><div class="check-text">Listen for turbo whine at 2,500–3,000 RPM</div></div>
+          <div class="check-item"><div class="check-box" onclick="this.classList.toggle('done')">✓</div><div class="check-text">Test all power windows, sunroof, and locks</div></div>
+          <div class="check-item"><div class="check-box" onclick="this.classList.toggle('done')">✓</div><div class="check-text">Check A/C cooling speed and vent operation</div></div>
+          <div class="check-item"><div class="check-box" onclick="this.classList.toggle('done')">✓</div><div class="check-text">Ask for full service history and confirm no open recalls</div></div>
+        </div>
+      </div>
+
+      <!-- Outreach Message -->
+      <div class="packet-section">
+        <div class="packet-sec-header">
+          <div class="packet-sec-icon" style="background:rgba(139,92,246,.14)">✉️</div>
+          <span class="packet-sec-title">Outreach Message</span>
+        </div>
+        <div class="outreach-body">
+          <div class="outreach-msg">
+            Hi, I'm interested in the <strong>2022 Honda CR-V EX</strong> listed at <strong>$24,900</strong>. I've done my research on recent comparable sales in the area and I'm a serious buyer ready to move quickly.<br/><br/>
+            Would you be available for a test drive this week? I'd also like to discuss pricing — happy to talk numbers when we meet.
+          </div>
+          <button class="copy-btn">📋 Copy message</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+const SCREEN_LABELS = {
+  'landing':         'Landing',
+  'intake-use':      'Intake · Use case',
+  'intake-budget':   'Intake · Budget',
+  'intake-prefs':    'Intake · Preferences',
+  'scanning':        'Scanning',
+  'shortlist':       'Shortlist',
+  'listing-detail':  'Listing Detail',
+  'deal-packet':     'Deal Packet',
+};
+
+function showScreen(id, btn) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  document.querySelectorAll('.proto-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.getElementById('screenTag').textContent = SCREEN_LABELS[id] || id;
+  document.querySelector('.app').scrollTop = 0;
+}
+
+function selectUse(el) {
+  document.querySelectorAll('.use-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function setBudgetMode(el, mode) {
+  document.querySelectorAll('.toggle-opt').forEach(o => o.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('monthlyFields').style.display = mode === 'monthly' ? 'flex' : 'none';
+  document.getElementById('cashFields').style.display    = mode === 'cash'    ? 'flex' : 'none';
+}
+</script>
+</body>
+</html>

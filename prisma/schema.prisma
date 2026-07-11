@@ -1,0 +1,146 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// A buyer using the agent. No auth yet (see doc/05_project_note.md open decisions) —
+// this exists so intake profiles, saved cars, and packets have somewhere to attach.
+model User {
+  id        String   @id @default(cuid())
+  email     String?  @unique
+  createdAt DateTime @default(now())
+
+  intakeProfile IntakeProfile?
+  selections    CarSelection[]
+  alerts        Alert[]
+
+  @@map("users")
+}
+
+// One buyer's intake answers — mirrors AppState in app/_lib/types.ts.
+model IntakeProfile {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  budgetMode String @default("monthly") // 'cash' | 'monthly'
+  cashTotal  Int    @default(28000)
+  monthly    Int    @default(450)
+  term       Int    @default(60)
+  down       Int    @default(3000)
+
+  weightReliability Int @default(80)
+  weightResale      Int @default(55)
+  weightRunning     Int @default(65)
+  weightPerformance Int @default(35)
+
+  usage    String[] @default(["commute"])
+  timeline String   @default("month")
+  radius   Int      @default(60)
+  zip      String   @default("94110")
+  condition String  @default("either")
+  fuel      String  @default("either")
+  fuelCost  Int     @default(200)
+
+  mustHaveAwd      Boolean @default(true)
+  mustHaveCarplay  Boolean @default(true)
+  mustHaveBackup   Boolean @default(true)
+  mustHaveMpg      Boolean @default(false)
+  mustHaveThirdRow Boolean @default(false)
+  mustHaveManual   Boolean @default(false)
+  customMusts      String[] @default([])
+
+  updatedAt DateTime @updatedAt
+
+  @@map("intake_profiles")
+}
+
+// A car/listing the agent has surfaced. Hardcoded in useAppView.ts today (carData) —
+// this table is where that data would live once listings are sourced for real.
+model Car {
+  id        String   @id // e.g. 'crv' — matches the slug used throughout the prototype
+  name      String
+  miles     String
+  distance  String
+  fit       Int
+  deal      String // 'Good' | 'Fair' | 'Over'
+  tco       String // all-in monthly cost, e.g. "$430"
+  otd       String // out-the-door price, e.g. "$26,860"
+  condition String // 'New' | 'Used' | 'Certified pre-owned'
+  fuelType  String // 'Gas' | 'Hybrid' | 'Electric'
+  dealer    String
+  pros      String[]
+  cons      String[]
+  why       String   @db.Text
+
+  selections  CarSelection[]
+  dealPackets DealPacket[]
+
+  @@map("cars")
+}
+
+// A user's saved/compare state for a given car (Shortlist + Compare screens).
+model CarSelection {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  carId  String
+  car    Car    @relation(fields: [carId], references: [id], onDelete: Cascade)
+
+  saved     Boolean  @default(false)
+  inCompare Boolean  @default(false)
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, carId])
+  @@map("car_selections")
+}
+
+// The negotiation packet generated for a car (Deal Packet screen).
+model DealPacket {
+  id     String @id @default(cuid())
+  carId  String
+  car    Car    @relation(fields: [carId], references: [id], onDelete: Cascade)
+
+  status     String // 'Ready to send' | 'Draft' | 'Sent'
+  statusTone String // 'green' | 'gray' | 'blue'
+  generated  String
+  otdTotal   String
+  monthly    String
+  openOffer  String
+  settle     String
+  walkAway   String
+
+  // Simple structured lists — kept as JSON rather than separate tables since
+  // they're always read/written as a whole unit per packet, never queried individually.
+  worksheet   Json     @default("[]") // { k, v, color, weight }[]
+  scriptLines String[] @default([])
+  checklist   String[] @default([])
+  outreach    String   @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("deal_packets")
+}
+
+// Proactive notifications (top-bar bell / Re-plan pattern).
+model Alert {
+  id     String  @id @default(cuid())
+  userId String
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type      String // 'PRICE DROP' | 'MARKET SHIFT' | 'BETTER MATCH' | 'SOLD'
+  tone      String // 'green' | 'blue' | 'purple' | 'gray'
+  title     String
+  body      String @db.Text
+  goScreen  String? // screen key to navigate to on click, if any
+  cta       String?
+  dismissed Boolean @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("alerts")
+}
