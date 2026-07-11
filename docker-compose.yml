@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: lot-agent-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: lot_agent
+      POSTGRES_PASSWORD: lot_agent
+      POSTGRES_DB: lot_agent
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:

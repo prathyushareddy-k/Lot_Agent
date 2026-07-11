@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lot Agent — ERD</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      background: #0f1117;
+      color: #e2e8f0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    header {
+      padding: 20px 32px;
+      border-bottom: 1px solid #1e293b;
+    }
+    header h1 { margin: 0; font-size: 20px; color: #f8fafc; }
+    header p  { margin: 4px 0 0; font-size: 13px; color: #64748b; }
+    #diagram {
+      padding: 32px;
+      overflow: auto;
+    }
+    .mermaid {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 24px;
+      display: inline-block;
+      min-width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Lot Agent — Entity Relationship Diagram</h1>
+    <p>Derived from PRD v1 · 20 entities</p>
+  </header>
+  <div id="diagram">
+    <div class="mermaid">
+erDiagram
+    USER {
+        uuid user_id PK
+        string email
+        string name
+        timestamp created_at
+    }
+    SESSION {
+        uuid session_id PK
+        uuid user_id FK
+        string share_token
+        timestamp created_at
+        timestamp last_active_at
+    }
+    INTAKE {
+        uuid intake_id PK
+        uuid session_id FK
+        enum primary_use
+        string zip_code
+        int search_radius_miles
+        enum timeline
+        enum budget_mode
+        decimal monthly_payment
+        decimal down_payment
+        int loan_term_months
+        decimal cash_total
+        enum condition_preference
+        timestamp created_at
+        timestamp updated_at
+    }
+    PREFERENCE_WEIGHT {
+        uuid weight_id PK
+        uuid intake_id FK
+        enum dimension
+        int weight_value
+    }
+    MUST_HAVE_FEATURE {
+        uuid feature_id PK
+        uuid intake_id FK
+        enum feature_type
+        boolean is_required
+    }
+    SCAN_JOB {
+        uuid scan_id PK
+        uuid session_id FK
+        uuid intake_id FK
+        enum status
+        timestamp started_at
+        timestamp completed_at
+        timestamp last_scanned_at
+    }
+    SCAN_SOURCE {
+        uuid source_id PK
+        uuid scan_id FK
+        enum source_type
+        enum status
+        int count_found
+        timestamp completed_at
+    }
+    LISTING {
+        uuid listing_id PK
+        string external_id
+        enum source_type
+        string make
+        string model
+        int year
+        string trim
+        int mileage
+        decimal asking_price
+        string dealer_name
+        string location_zip
+        int distance_miles
+        enum condition
+        string vin
+        timestamp created_at
+        timestamp updated_at
+    }
+    SHORTLIST_ITEM {
+        uuid shortlist_item_id PK
+        uuid scan_id FK
+        uuid listing_id FK
+        int rank
+        int fit_score
+        enum deal_quality
+        decimal tco_per_month
+        boolean is_active
+    }
+    FIT_SCORE_DETAIL {
+        uuid detail_id PK
+        uuid shortlist_item_id FK
+        enum dimension
+        int score
+        string note
+    }
+    LISTING_PRO_CON {
+        uuid pro_con_id PK
+        uuid shortlist_item_id FK
+        enum type
+        string text
+    }
+    DEAL_JUDGE {
+        uuid deal_judge_id PK
+        uuid listing_id FK
+        enum verdict
+        decimal asking_price
+        decimal comp_average_price
+        decimal price_delta
+        int comp_sample_size
+        int comp_window_days
+        decimal headroom_low
+        decimal headroom_high
+        timestamp computed_at
+    }
+    COMPARABLE_SALE {
+        uuid comp_id PK
+        string make
+        string model
+        int year
+        string trim
+        decimal sale_price
+        int mileage
+        date sale_date
+        string location_zip
+    }
+    FINALIST {
+        uuid finalist_id PK
+        uuid session_id FK
+        uuid shortlist_item_id FK
+        timestamp promoted_at
+    }
+    DEAL_PACKET {
+        uuid packet_id PK
+        uuid finalist_id FK
+        text outreach_message
+        timestamp outreach_sent_at
+        timestamp generated_at
+    }
+    OFFER_WORKSHEET_ITEM {
+        uuid item_id PK
+        uuid packet_id FK
+        string label
+        decimal amount
+        int sort_order
+    }
+    NEGOTIATION_SCRIPT {
+        uuid script_id PK
+        uuid packet_id FK
+        decimal open_price
+        decimal settle_near_price
+        decimal walk_away_price
+        text open_phrasing
+        text settle_phrasing
+        text walk_away_phrasing
+    }
+    TEST_DRIVE_CHECKLIST_ITEM {
+        uuid item_id PK
+        uuid packet_id FK
+        string text
+        boolean is_model_specific
+        int sort_order
+    }
+    REPLAN_NOTIFICATION {
+        uuid notification_id PK
+        uuid session_id FK
+        uuid scan_id FK
+        text what_changed
+        text why_it_matters
+        text what_to_do
+        timestamp created_at
+        timestamp read_at
+    }
+    COMPARE_SELECTION {
+        uuid compare_id PK
+        uuid session_id FK
+        uuid shortlist_item_id FK
+        timestamp added_at
+    }
+
+    USER ||--o{ SESSION : "has"
+    SESSION ||--|| INTAKE : "submits"
+    INTAKE ||--o{ PREFERENCE_WEIGHT : "has"
+    INTAKE ||--o{ MUST_HAVE_FEATURE : "has"
+    SESSION ||--o{ SCAN_JOB : "triggers"
+    SCAN_JOB ||--o{ SCAN_SOURCE : "checks"
+    SCAN_JOB ||--o{ SHORTLIST_ITEM : "produces"
+    LISTING ||--o{ SHORTLIST_ITEM : "appears in"
+    SHORTLIST_ITEM ||--o{ FIT_SCORE_DETAIL : "has"
+    SHORTLIST_ITEM ||--o{ LISTING_PRO_CON : "has"
+    LISTING ||--o{ DEAL_JUDGE : "evaluated by"
+    DEAL_JUDGE }o--o{ COMPARABLE_SALE : "references"
+    SESSION ||--o{ FINALIST : "promotes"
+    SHORTLIST_ITEM ||--o{ FINALIST : "becomes"
+    FINALIST ||--|| DEAL_PACKET : "generates"
+    DEAL_PACKET ||--o{ OFFER_WORKSHEET_ITEM : "contains"
+    DEAL_PACKET ||--|| NEGOTIATION_SCRIPT : "contains"
+    DEAL_PACKET ||--o{ TEST_DRIVE_CHECKLIST_ITEM : "contains"
+    SESSION ||--o{ REPLAN_NOTIFICATION : "receives"
+    SCAN_JOB ||--o{ REPLAN_NOTIFICATION : "triggers"
+    SESSION ||--o{ COMPARE_SELECTION : "selects"
+    SHORTLIST_ITEM ||--o{ COMPARE_SELECTION : "included in"
+    </div>
+  </div>
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: "dark", er: { useMaxWidth: false } });
+  </script>
+</body>
+</html>

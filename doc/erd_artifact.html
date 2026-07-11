@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lot Agent — ERD</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+    :root {
+      --bg:        #080d16;
+      --surface:   #111827;
+      --surface2:  #1a2333;
+      --border:    #1f2d3d;
+      --text:      #e2e8f0;
+      --muted:     #64748b;
+
+      --session:   #3b82f6;
+      --intake:    #8b5cf6;
+      --scan:      #f59e0b;
+      --market:    #10b981;
+      --shortlist: #06b6d4;
+      --deal:      #ec4899;
+      --notify:    #f97316;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 20px 36px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 100;
+    }
+    header h1 { font-size: 17px; font-weight: 700; color: #f1f5f9; letter-spacing: -0.01em; }
+    header p  { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    .legend {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ── Tabs ── */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      padding: 16px 36px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .tab {
+      padding: 8px 18px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      border-radius: 6px 6px 0 0;
+      border: 1px solid transparent;
+      border-bottom: none;
+      background: transparent;
+      transition: all 0.15s;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active {
+      color: var(--text);
+      background: var(--surface);
+      border-color: var(--border);
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* ── Main canvas ── */
+    .canvas {
+      padding: 32px 36px 60px;
+    }
+
+    /* ── Domain section ── */
+    .domain-section { margin-bottom: 36px; }
+
+    .domain-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .domain-label span {
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 10px;
+    }
+    .domain-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .entities-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    /* ── Entity card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      width: 240px;
+      flex-shrink: 0;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+
+    .card-header {
+      padding: 10px 14px 9px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-header .name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: #f8fafc;
+    }
+    .card-header .count {
+      font-size: 10px;
+      opacity: 0.55;
+    }
+
+    .card-fields { list-style: none; }
+
+    .field {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5.5px 14px;
+      border-top: 1px solid rgba(255,255,255,0.04);
+    }
+    .field:first-child { border-top: 1px solid rgba(255,255,255,0.07); }
+
+    .field-name {
+      flex: 1;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #cbd5e1;
+    }
+    .field-type {
+      font-size: 10px;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .badge {
+      font-size: 8.5px;
+      font-weight: 700;
+      padding: 1.5px 5px;
+      border-radius: 3px;
+      letter-spacing: 0.04em;
+      flex-shrink: 0;
+    }
+    .pk { background: rgba(251,191,36,0.12); color: #fbbf24; }
+    .fk { background: rgba(129,140,248,0.12); color: #818cf8; }
+
+    /* ── Relationships tab ── */
+    .rel-canvas { padding: 32px 36px 60px; }
+    .rel-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 8px;
+    }
+    .rel-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 14px;
+    }
+    .rel-entity {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .rel-card {
+      font-size: 10px;
+      color: var(--muted);
+      white-space: nowrap;
+      margin: 0 4px;
+    }
+    .rel-label {
+      margin-left: auto;
+      font-size: 10px;
+      color: var(--muted);
+      font-style: italic;
+    }
+    .arrow-icon { color: var(--muted); font-size: 13px; }
+
+    /* ── Flow tab ── */
+    .flow-canvas { padding: 40px 36px 60px; overflow-x: auto; }
+    .flow-wrap {
+      min-width: 900px;
+      position: relative;
+    }
+    svg.flow { width: 100%; height: 500px; }
+
+    .flow-node rect {
+      rx: 8; ry: 8;
+      stroke-width: 1.5;
+      fill: var(--surface);
+    }
+    .flow-node text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      fill: #f1f5f9;
+      text-anchor: middle;
+      dominant-baseline: central;
+    }
+    .flow-edge {
+      fill: none;
+      stroke: var(--border);
+      stroke-width: 1.5;
+      marker-end: url(#arrow);
+    }
+    .flow-edge-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 9px;
+      fill: var(--muted);
+      text-anchor: middle;
+    }
+
+    /* ── Enums tab ── */
+    .enum-canvas { padding: 32px 36px 60px; }
+    .enum-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 14px;
+    }
+    .enum-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .enum-header {
+      padding: 9px 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface2);
+    }
+    .enum-values {
+      padding: 8px 14px 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .enum-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      padding: 3px 9px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.05);
+      color: #94a3b8;
+    }
+
+    /* domain accent colors applied via JS */
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Lot Agent — Entity Relationship Diagram</h1>
+    <p>19 entities · 7 domains · Updated with Q&amp;A decisions</p>
+  </div>
+  <div class="legend" id="legend"></div>
+</header>
+
+<div class="tabs" id="tabs">
+  <button class="tab active" data-tab="entities">Entities</button>
+  <button class="tab" data-tab="flow">Data Flow</button>
+  <button class="tab" data-tab="relationships">Relationships</button>
+  <button class="tab" data-tab="enums">Enums</button>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAB 1 — ENTITIES
+════════════════════════════════════════════ -->
+<div class="tab-content active canvas" id="tab-entities"></div>
+
+<!-- ═══════════════════════════════════════════
+     TAB 2 — DATA FLOW
+════════════════════════════════════════════ -->
+<div class="tab-content flow-canvas" id="tab-flow">
+  <div class="flow-wrap">
+    <svg class="flow" id="flowSvg" viewBox="0 0 1100 480" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#334155"/>
+        </marker>
+      </defs>
+      <!-- Nodes drawn by JS -->
+    </svg>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAB 3 — RELATIONSHIPS
+════════════════════════════════════════════ -->
+<div class="tab-content rel-canvas" id="tab-relationships">
+  <div class="rel-grid" id="relGrid"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAB 4 — ENUMS
+════════════════════════════════════════════ -->
+<div class="tab-content enum-canvas" id="tab-enums">
+  <div class="enum-grid" id="enumGrid"></div>
+</div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+
+const DOMAINS = [
+  { id: 'session',   label: 'Session',      color: '#3b82f6' },
+  { id: 'intake',    label: 'Intake',       color: '#8b5cf6' },
+  { id: 'scan',      label: 'Scanning',     color: '#f59e0b' },
+  { id: 'market',    label: 'Market Data',  color: '#10b981' },
+  { id: 'shortlist', label: 'Shortlist',    color: '#06b6d4' },
+  { id: 'deal',      label: 'Deal',         color: '#ec4899' },
+  { id: 'notify',    label: 'Notifications',color: '#f97316' },
+];
+
+const ENTITIES = [
+  // SESSION
+  {
+    domain: 'session', name: 'SESSION',
+    fields: [
+      { name:'session_id',     type:'uuid',      badge:'PK' },
+      { name:'created_at',     type:'timestamp', badge:''   },
+      { name:'last_active_at', type:'timestamp', badge:''   },
+    ]
+  },
+
+  // INTAKE
+  {
+    domain: 'intake', name: 'INTAKE',
+    fields: [
+      { name:'intake_id',          type:'uuid',      badge:'PK' },
+      { name:'session_id',         type:'uuid',      badge:'FK' },
+      { name:'primary_use',        type:'enum',      badge:''   },
+      { name:'zip_code',           type:'varchar',   badge:''   },
+      { name:'search_radius_mi',   type:'int',       badge:''   },
+      { name:'timeline',           type:'enum',      badge:''   },
+      { name:'budget_mode',        type:'enum',      badge:''   },
+      { name:'monthly_payment',    type:'decimal',   badge:''   },
+      { name:'down_payment',       type:'decimal',   badge:''   },
+      { name:'loan_term_months',   type:'int',       badge:''   },
+      { name:'cash_total',         type:'decimal',   badge:''   },
+      { name:'condition_pref',     type:'enum',      badge:''   },
+      { name:'created_at',         type:'timestamp', badge:''   },
+      { name:'updated_at',         type:'timestamp', badge:''   },
+    ]
+  },
+  {
+    domain: 'intake', name: 'PREFERENCE_WEIGHT',
+    fields: [
+      { name:'weight_id',    type:'uuid', badge:'PK' },
+      { name:'intake_id',    type:'uuid', badge:'FK' },
+      { name:'dimension',    type:'enum', badge:''   },
+      { name:'weight_value', type:'int',  badge:''   },
+    ]
+  },
+  {
+    domain: 'intake', name: 'MUST_HAVE_FEATURE',
+    fields: [
+      { name:'feature_id',   type:'uuid',    badge:'PK' },
+      { name:'intake_id',    type:'uuid',    badge:'FK' },
+      { name:'feature_type', type:'enum',    badge:''   },
+      { name:'is_required',  type:'boolean', badge:''   },
+    ]
+  },
+
+  // SCAN
+  {
+    domain: 'scan', name: 'SCAN_JOB',
+    fields: [
+      { name:'scan_id',         type:'uuid',      badge:'PK' },
+      { name:'session_id',      type:'uuid',      badge:'FK' },
+      { name:'intake_id',       type:'uuid',      badge:'FK' },
+      { name:'trigger_type',    type:'enum',      badge:''   },
+      { name:'status',          type:'enum',      badge:''   },
+      { name:'started_at',      type:'timestamp', badge:''   },
+      { name:'completed_at',    type:'timestamp', badge:''   },
+      { name:'last_scanned_at', type:'timestamp', badge:''   },
+    ]
+  },
+  {
+    domain: 'scan', name: 'SCAN_SOURCE',
+    fields: [
+      { name:'source_id',    type:'uuid',      badge:'PK' },
+      { name:'scan_id',      type:'uuid',      badge:'FK' },
+      { name:'source_type',  type:'enum',      badge:''   },
+      { name:'status',       type:'enum',      badge:''   },
+      { name:'count_found',  type:'int',       badge:''   },
+      { name:'completed_at', type:'timestamp', badge:''   },
+    ]
+  },
+
+  // MARKET DATA
+  {
+    domain: 'market', name: 'LISTING',
+    fields: [
+      { name:'listing_id',    type:'uuid',      badge:'PK' },
+      { name:'external_id',   type:'varchar',   badge:''   },
+      { name:'source_type',   type:'enum',      badge:''   },
+      { name:'make',          type:'varchar',   badge:''   },
+      { name:'model',         type:'varchar',   badge:''   },
+      { name:'year',          type:'int',       badge:''   },
+      { name:'trim',          type:'varchar',   badge:''   },
+      { name:'mileage',       type:'int',       badge:''   },
+      { name:'asking_price',  type:'decimal',   badge:''   },
+      { name:'dealer_name',   type:'varchar',   badge:''   },
+      { name:'location_zip',  type:'varchar',   badge:''   },
+      { name:'distance_miles',type:'int',       badge:''   },
+      { name:'condition',     type:'enum',      badge:''   },
+      { name:'vin',           type:'varchar',   badge:''   },
+      { name:'created_at',    type:'timestamp', badge:''   },
+      { name:'updated_at',    type:'timestamp', badge:''   },
+    ]
+  },
+  {
+    domain: 'market', name: 'DEAL_JUDGE',
+    fields: [
+      { name:'deal_judge_id',     type:'uuid',      badge:'PK' },
+      { name:'listing_id',        type:'uuid',      badge:'FK' },
+      { name:'verdict',           type:'enum',      badge:''   },
+      { name:'asking_price',      type:'decimal',   badge:''   },
+      { name:'comp_average_price',type:'decimal',   badge:''   },
+      { name:'price_delta',       type:'decimal',   badge:''   },
+      { name:'comp_sample_size',  type:'int',       badge:''   },
+      { name:'comp_window_days',  type:'int',       badge:''   },
+      { name:'headroom_low',      type:'decimal',   badge:''   },
+      { name:'headroom_high',     type:'decimal',   badge:''   },
+      { name:'computed_at',       type:'timestamp', badge:''   },
+    ]
+  },
+  {
+    domain: 'market', name: 'COMPARABLE_SALE',
+    fields: [
+      { name:'comp_id',      type:'uuid',    badge:'PK' },
+      { name:'make',         type:'varchar', badge:''   },
+      { name:'model',        type:'varchar', badge:''   },
+      { name:'year',         type:'int',     badge:''   },
+      { name:'trim',         type:'varchar', badge:''   },
+      { name:'sale_price',   type:'decimal', badge:''   },
+      { name:'mileage',      type:'int',     badge:''   },
+      { name:'sale_date',    type:'date',    badge:''   },
+      { name:'location_zip', type:'varchar', badge:''   },
+    ]
+  },
+  {
+    domain: 'market', name: 'DEAL_JUDGE_COMP',
+    fields: [
+      { name:'deal_judge_id', type:'uuid', badge:'FK' },
+      { name:'comp_id',       type:'uuid', badge:'FK' },
+    ]
+  },
+
+  // SHORTLIST
+  {
+    domain: 'shortlist', name: 'SHORTLIST_ITEM',
+    fields: [
+      { name:'shortlist_item_id', type:'uuid',      badge:'PK' },
+      { name:'scan_id',           type:'uuid',      badge:'FK' },
+      { name:'listing_id',        type:'uuid',      badge:'FK' },
+      { name:'rank',              type:'int',       badge:''   },
+      { name:'fit_score',         type:'int',       badge:''   },
+      { name:'deal_quality',      type:'enum',      badge:''   },
+      { name:'tco_per_month',     type:'decimal',   badge:''   },
+      { name:'is_active',         type:'boolean',   badge:''   },
+    ]
+  },
+  {
+    domain: 'shortlist', name: 'FIT_SCORE_DETAIL',
+    fields: [
+      { name:'detail_id',         type:'uuid',    badge:'PK' },
+      { name:'shortlist_item_id', type:'uuid',    badge:'FK' },
+      { name:'dimension',         type:'enum',    badge:''   },
+      { name:'score',             type:'int',     badge:''   },
+      { name:'note',              type:'varchar', badge:''   },
+    ]
+  },
+  {
+    domain: 'shortlist', name: 'LISTING_PRO_CON',
+    fields: [
+      { name:'pro_con_id',        type:'uuid',    badge:'PK' },
+      { name:'shortlist_item_id', type:'uuid',    badge:'FK' },
+      { name:'type',              type:'enum',    badge:''   },
+      { name:'text',              type:'text',    badge:''   },
+    ]
+  },
+  {
+    domain: 'shortlist', name: 'COMPARE_SELECTION',
+    fields: [
+      { name:'compare_id',        type:'uuid',      badge:'PK' },
+      { name:'session_id',        type:'uuid',      badge:'FK' },
+      { name:'shortlist_item_id', type:'uuid',      badge:'FK' },
+      { name:'added_at',          type:'timestamp', badge:''   },
+    ]
+  },
+
+  // DEAL
+  {
+    domain: 'deal', name: 'FINALIST',
+    fields: [
+      { name:'finalist_id',       type:'uuid',      badge:'PK' },
+      { name:'session_id',        type:'uuid',      badge:'FK' },
+      { name:'shortlist_item_id', type:'uuid',      badge:'FK' },
+      { name:'promoted_at',       type:'timestamp', badge:''   },
+    ]
+  },
+  {
+    domain: 'deal', name: 'DEAL_PACKET',
+    fields: [
+      { name:'packet_id',       type:'uuid',      badge:'PK' },
+      { name:'finalist_id',     type:'uuid',      badge:'FK' },
+      { name:'outreach_message',type:'text',      badge:''   },
+      { name:'outreach_sent_at',type:'timestamp', badge:''   },
+      { name:'generated_at',    type:'timestamp', badge:''   },
+    ]
+  },
+  {
+    domain: 'deal', name: 'OFFER_WORKSHEET_ITEM',
+    fields: [
+      { name:'item_id',    type:'uuid',    badge:'PK' },
+      { name:'packet_id',  type:'uuid',    badge:'FK' },
+      { name:'label',      type:'varchar', badge:''   },
+      { name:'amount',     type:'decimal', badge:''   },
+      { name:'sort_order', type:'int',     badge:''   },
+    ]
+  },
+  {
+    domain: 'deal', name: 'NEGOTIATION_SCRIPT',
+    fields: [
+      { name:'script_id',         type:'uuid',    badge:'PK' },
+      { name:'packet_id',         type:'uuid',    badge:'FK' },
+      { name:'open_price',        type:'decimal', badge:''   },
+      { name:'settle_near_price', type:'decimal', badge:''   },
+      { name:'walk_away_price',   type:'decimal', badge:''   },
+      { name:'open_phrasing',     type:'text',    badge:''   },
+      { name:'settle_phrasing',   type:'text',    badge:''   },
+      { name:'walk_away_phrasing',type:'text',    badge:''   },
+    ]
+  },
+  {
+    domain: 'deal', name: 'TEST_DRIVE_CHECKLIST',
+    fields: [
+      { name:'item_id',          type:'uuid',    badge:'PK' },
+      { name:'packet_id',        type:'uuid',    badge:'FK' },
+      { name:'text',             type:'varchar', badge:''   },
+      { name:'is_model_specific',type:'boolean', badge:''   },
+      { name:'sort_order',       type:'int',     badge:''   },
+    ]
+  },
+
+  // NOTIFICATIONS
+  {
+    domain: 'notify', name: 'REPLAN_NOTIFICATION',
+    fields: [
+      { name:'notification_id', type:'uuid',      badge:'PK' },
+      { name:'session_id',      type:'uuid',      badge:'FK' },
+      { name:'scan_id',         type:'uuid',      badge:'FK' },
+      { name:'what_changed',    type:'text',      badge:''   },
+      { name:'why_it_matters',  type:'text',      badge:''   },
+      { name:'what_to_do',      type:'text',      badge:''   },
+      { name:'created_at',      type:'timestamp', badge:''   },
+      { name:'read_at',         type:'timestamp', badge:''   },
+    ]
+  },
+];
+
+const RELATIONSHIPS = [
+  { from:'SESSION',          card:'1 → M', to:'INTAKE',                label:'submits'     },
+  { from:'SESSION',          card:'1 → M', to:'SCAN_JOB',              label:'triggers'    },
+  { from:'SESSION',          card:'1 → M', to:'FINALIST',              label:'promotes'    },
+  { from:'SESSION',          card:'1 → M', to:'COMPARE_SELECTION',     label:'selects'     },
+  { from:'SESSION',          card:'1 → M', to:'REPLAN_NOTIFICATION',   label:'receives'    },
+  { from:'INTAKE',           card:'1 → M', to:'PREFERENCE_WEIGHT',     label:'configures'  },
+  { from:'INTAKE',           card:'1 → M', to:'MUST_HAVE_FEATURE',     label:'configures'  },
+  { from:'SCAN_JOB',         card:'1 → M', to:'SCAN_SOURCE',           label:'checks'      },
+  { from:'SCAN_JOB',         card:'1 → M', to:'SHORTLIST_ITEM',        label:'produces'    },
+  { from:'SCAN_JOB',         card:'1 → M', to:'REPLAN_NOTIFICATION',   label:'triggers'    },
+  { from:'LISTING',          card:'1 → M', to:'SHORTLIST_ITEM',        label:'appears in'  },
+  { from:'LISTING',          card:'1 → 1', to:'DEAL_JUDGE',            label:'evaluated by'},
+  { from:'DEAL_JUDGE',       card:'M ↔ M', to:'COMPARABLE_SALE',       label:'via DEAL_JUDGE_COMP'},
+  { from:'SHORTLIST_ITEM',   card:'1 → M', to:'FIT_SCORE_DETAIL',      label:'scored by'   },
+  { from:'SHORTLIST_ITEM',   card:'1 → M', to:'LISTING_PRO_CON',       label:'described by'},
+  { from:'SHORTLIST_ITEM',   card:'1 → M', to:'COMPARE_SELECTION',     label:'included in' },
+  { from:'SHORTLIST_ITEM',   card:'1 → M', to:'FINALIST',              label:'becomes'     },
+  { from:'FINALIST',         card:'1 → 1', to:'DEAL_PACKET',           label:'generates'   },
+  { from:'DEAL_PACKET',      card:'1 → M', to:'OFFER_WORKSHEET_ITEM',  label:'contains'    },
+  { from:'DEAL_PACKET',      card:'1 → 1', to:'NEGOTIATION_SCRIPT',    label:'contains'    },
+  { from:'DEAL_PACKET',      card:'1 → M', to:'TEST_DRIVE_CHECKLIST',  label:'contains'    },
+];
+
+const ENUMS = [
+  { name:'primary_use',        values:['commute','family','weekend','first_car']                    },
+  { name:'timeline',           values:['asap','month','quarter','exploring']                        },
+  { name:'budget_mode',        values:['monthly','cash']                                            },
+  { name:'condition_pref',     values:['used','cpo','new','open']                                   },
+  { name:'dimension',          values:['reliability','resale','running_cost','performance']         },
+  { name:'feature_type',       values:['awd','carplay','backup_camera','mpg35','third_row','manual']},
+  { name:'trigger_type',       values:['scheduled','manual']                                        },
+  { name:'scan_status',        values:['pending','in_progress','completed','failed']                },
+  { name:'source_type',        values:['franchise_dealer','independent_dealer','private_party','cpo','comp_sales','recalls_safety']},
+  { name:'deal_quality',       values:['good_deal','fair_price','overpriced']                      },
+  { name:'listing_condition',  values:['used','cpo','new']                                          },
+  { name:'pro_con_type',       values:['pro','con']                                                 },
+  { name:'verdict',            values:['good_deal','fair_price','overpriced']                      },
+];
+
+// ─── RENDER LEGEND ───────────────────────────────────────────────────────────
+const legend = document.getElementById('legend');
+DOMAINS.forEach(d => {
+  legend.innerHTML += `
+    <div class="legend-item">
+      <div class="dot" style="background:${d.color}"></div>
+      ${d.label}
+    </div>`;
+});
+
+// ─── RENDER ENTITIES TAB ─────────────────────────────────────────────────────
+const domainMap = {};
+DOMAINS.forEach(d => domainMap[d.id] = d);
+
+const entitiesContainer = document.getElementById('tab-entities');
+DOMAINS.forEach(dom => {
+  const entities = ENTITIES.filter(e => e.domain === dom.id);
+  if (!entities.length) return;
+
+  const section = document.createElement('div');
+  section.className = 'domain-section';
+
+  const label = document.createElement('div');
+  label.className = 'domain-label';
+  label.innerHTML = `<span style="background:${dom.color}22; color:${dom.color}; border:1px solid ${dom.color}44">${dom.label.toUpperCase()}</span>`;
+  section.appendChild(label);
+
+  const row = document.createElement('div');
+  row.className = 'entities-row';
+
+  entities.forEach(ent => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.borderTop = `2.5px solid ${dom.color}`;
+
+    const fieldCount = ent.fields.length;
+    card.innerHTML = `
+      <div class="card-header" style="background: ${dom.color}11">
+        <span class="name">${ent.name}</span>
+        <span class="count">${fieldCount} cols</span>
+      </div>
+      <ul class="card-fields">
+        ${ent.fields.map(f => `
+          <li class="field">
+            ${f.badge ? `<span class="badge ${f.badge.toLowerCase()}">${f.badge}</span>` : '<span style="width:24px"></span>'}
+            <span class="field-name">${f.name}</span>
+            <span class="field-type">${f.type}</span>
+          </li>`).join('')}
+      </ul>`;
+    row.appendChild(card);
+  });
+
+  section.appendChild(row);
+  entitiesContainer.appendChild(section);
+});
+
+// ─── RENDER RELATIONSHIPS TAB ─────────────────────────────────────────────────
+const relGrid = document.getElementById('relGrid');
+RELATIONSHIPS.forEach(r => {
+  const row = document.createElement('div');
+  row.className = 'rel-row';
+
+  const fromDomain = ENTITIES.find(e => e.name === r.from)?.domain;
+  const toDomain   = ENTITIES.find(e => e.name === r.to)?.domain;
+  const fromColor  = fromDomain ? domainMap[fromDomain]?.color : '#64748b';
+  const toColor    = toDomain   ? domainMap[toDomain]?.color   : '#64748b';
+
+  row.innerHTML = `
+    <span class="rel-entity" style="color:${fromColor}">${r.from}</span>
+    <span class="rel-card">${r.card}</span>
+    <span class="arrow-icon">→</span>
+    <span class="rel-entity" style="color:${toColor}">${r.to}</span>
+    <span class="rel-label">${r.label}</span>`;
+  relGrid.appendChild(row);
+});
+
+// ─── RENDER ENUMS TAB ─────────────────────────────────────────────────────────
+const enumGrid = document.getElementById('enumGrid');
+ENUMS.forEach(en => {
+  const card = document.createElement('div');
+  card.className = 'enum-card';
+  card.innerHTML = `
+    <div class="enum-header">${en.name}</div>
+    <div class="enum-values">
+      ${en.values.map(v => `<span class="enum-val">${v}</span>`).join('')}
+    </div>`;
+  enumGrid.appendChild(card);
+});
+
+// ─── RENDER FLOW TAB ──────────────────────────────────────────────────────────
+const svg = document.getElementById('flowSvg');
+
+const FLOW_NODES = [
+  { id:'SESSION',            x:480, y:30,  w:160, h:38, domain:'session'   },
+  { id:'INTAKE',             x:100, y:130, w:160, h:38, domain:'intake'    },
+  { id:'SCAN_JOB',           x:480, y:130, w:160, h:38, domain:'scan'      },
+  { id:'LISTING',            x:860, y:130, w:160, h:38, domain:'market'    },
+  { id:'PREF_WEIGHT',        x:30,  y:240, w:140, h:38, domain:'intake'    },
+  { id:'MUST_HAVE',          x:190, y:240, w:140, h:38, domain:'intake'    },
+  { id:'SCAN_SOURCE',        x:390, y:240, w:160, h:38, domain:'scan'      },
+  { id:'SHORTLIST_ITEM',     x:480, y:340, w:160, h:38, domain:'shortlist' },
+  { id:'DEAL_JUDGE',         x:860, y:240, w:160, h:38, domain:'market'    },
+  { id:'FIT_SCORE',          x:320, y:430, w:140, h:38, domain:'shortlist' },
+  { id:'PRO_CON',            x:480, y:430, w:140, h:38, domain:'shortlist' },
+  { id:'FINALIST',           x:170, y:430, w:140, h:38, domain:'deal'      },
+  { id:'REPLAN_NOTIF',       x:650, y:430, w:160, h:38, domain:'notify'    },
+  { id:'DEAL_PACKET',        x:170, y:520, w:140, h:38, domain:'deal'      },
+  { id:'COMPARE',            x:820, y:430, w:140, h:38, domain:'shortlist' },
+];
+
+const FLOW_EDGES = [
+  ['SESSION','INTAKE'],['SESSION','SCAN_JOB'],['SESSION','REPLAN_NOTIF'],
+  ['INTAKE','PREF_WEIGHT'],['INTAKE','MUST_HAVE'],
+  ['SCAN_JOB','SCAN_SOURCE'],['SCAN_JOB','SHORTLIST_ITEM'],['SCAN_JOB','REPLAN_NOTIF'],
+  ['LISTING','SHORTLIST_ITEM'],['LISTING','DEAL_JUDGE'],
+  ['SHORTLIST_ITEM','FIT_SCORE'],['SHORTLIST_ITEM','PRO_CON'],
+  ['SHORTLIST_ITEM','FINALIST'],['SHORTLIST_ITEM','COMPARE'],
+  ['FINALIST','DEAL_PACKET'],
+];
+
+function cx(n) { return n.x + n.w / 2; }
+function cy(n) { return n.y + n.h / 2; }
+function nodeById(id) { return FLOW_NODES.find(n => n.id === id); }
+
+// draw edges
+FLOW_EDGES.forEach(([a, b]) => {
+  const na = nodeById(a), nb = nodeById(b);
+  if (!na || !nb) return;
+  const x1 = cx(na), y1 = na.y + na.h;
+  const x2 = cx(nb), y2 = nb.y;
+  const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+  const midY = (y1 + y2) / 2;
+  path.setAttribute('d', `M${x1},${y1} C${x1},${midY} ${x2},${midY} ${x2},${y2}`);
+  path.setAttribute('class','flow-edge');
+  svg.insertBefore(path, svg.firstChild);
+});
+
+// draw nodes
+FLOW_NODES.forEach(n => {
+  const dom = domainMap[n.domain];
+  const color = dom?.color || '#64748b';
+
+  const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+  g.setAttribute('class','flow-node');
+
+  const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  rect.setAttribute('x', n.x); rect.setAttribute('y', n.y);
+  rect.setAttribute('width', n.w); rect.setAttribute('height', n.h);
+  rect.setAttribute('rx', 7);
+  rect.setAttribute('fill','#111827');
+  rect.setAttribute('stroke', color);
+  rect.setAttribute('stroke-width','1.5');
+
+  const text = document.createElementNS('http://www.w3.org/2000/svg','text');
+  text.setAttribute('x', cx(n)); text.setAttribute('y', cy(n));
+  text.setAttribute('fill','#f1f5f9');
+  text.setAttribute('font-family','JetBrains Mono, monospace');
+  text.setAttribute('font-size','10');
+  text.setAttribute('font-weight','600');
+  text.setAttribute('text-anchor','middle');
+  text.setAttribute('dominant-baseline','central');
+  text.textContent = n.id;
+
+  g.appendChild(rect); g.appendChild(text);
+  svg.appendChild(g);
+});
+
+// ─── TAB SWITCHING ────────────────────────────────────────────────────────────
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

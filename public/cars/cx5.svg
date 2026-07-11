@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" width="400" height="240">
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#eef2fb"></stop><stop offset="1" stop-color="#dde5f5"></stop>
+  </linearGradient></defs>
+  <rect width="400" height="240" fill="url(#bg)"></rect>
+  <ellipse cx="200" cy="206" rx="168" ry="13" fill="rgba(30,41,59,.10)"></ellipse>
+  
+  <path d="M120 122 L152 86 Q156 82 162 82 L246 82 Q252 82 256 86 L292 122 Z" fill="#182f70"></path>
+  
+  <path d="M132 118 L156 94 L194 94 L194 118 Z" fill="#bcc9e6"></path>
+  <path d="M202 94 L242 94 L272 118 L202 118 Z" fill="#bcc9e6"></path>
+  
+  <path d="M52 180 Q40 180 40 160 L40 146 Q40 130 60 127 L300 122 Q330 120 344 142 L356 162 Q362 174 350 180 Z" fill="#1e3a8a"></path>
+  
+  <rect x="52" y="168" width="298" height="9" rx="4" fill="rgba(0,0,0,.14)"></rect>
+  
+  <rect x="150" y="140" width="26" height="5" rx="2.5" fill="rgba(255,255,255,.35)"></rect>
+  <rect x="212" y="140" width="26" height="5" rx="2.5" fill="rgba(255,255,255,.35)"></rect>
+  
+  <path d="M352 150 q8 1 6 12 l-14 0 q-2 -12 8 -12 Z" fill="#f8fafc"></path>
+  
+  <rect x="42" y="150" width="8" height="12" rx="3" fill="#b4533a" opacity=".85"></rect>
+  
+    <circle cx="116" cy="182" r="34" fill="#26272b"></circle>
+    <circle cx="116" cy="182" r="17" fill="#d4d4d8"></circle>
+    <circle cx="116" cy="182" r="5" fill="#9aa0a8"></circle>
+    <g stroke="#9aa0a8" stroke-width="3">
+      <line x1="116" y1="182" x2="116" y2="167"></line>
+      <line x1="116" y1="182" x2="116" y2="197"></line>
+      <line x1="116" y1="182" x2="103" y2="189"></line>
+      <line x1="116" y1="182" x2="129" y2="189"></line>
+      <line x1="116" y1="182" x2="103" y2="175"></line>
+      <line x1="116" y1="182" x2="129" y2="175"></line>
+    </g>
+  
+    <circle cx="290" cy="182" r="34" fill="#26272b"></circle>
+    <circle cx="290" cy="182" r="17" fill="#d4d4d8"></circle>
+    <circle cx="290" cy="182" r="5" fill="#9aa0a8"></circle>
+    <g stroke="#9aa0a8" stroke-width="3">
+      <line x1="290" y1="182" x2="290" y2="167"></line>
+      <line x1="290" y1="182" x2="290" y2="197"></line>
+      <line x1="290" y1="182" x2="277" y2="189"></line>
+      <line x1="290" y1="182" x2="303" y2="189"></line>
+      <line x1="290" y1="182" x2="277" y2="175"></line>
+      <line x1="290" y1="182" x2="303" y2="175"></line>
+    </g>
+</svg>
