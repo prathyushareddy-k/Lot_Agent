@@ -18,10 +18,10 @@ import MobileShortlistScreen from './_components/MobileShortlistScreen';
 export default function Page() {
   const v = useAppView();
   return (
-    <div style={{ minHeight: '100vh', background: '#f4f4f5' }}>
+    <div style={{ minHeight: '100vh', background: '#FBF8F3' }}>
       <TopBar v={v} />
 
-      <div style={parseInlineStyle('padding-top:56px;')}>
+      <div style={parseInlineStyle('padding-top:60px;')}>
         {v.sLanding && <LandingScreen v={v} />}
         {v.sIntake && <IntakeScreen v={v} />}
         {v.sScanning && <ScanningScreen v={v} />}
@@ -40,19 +40,19 @@ export default function Page() {
         <div style={parseInlineStyle('position:fixed;left:0;right:0;bottom:0;z-index:90;display:flex;justify-content:center;padding:16px;pointer-events:none;')}>
           <div
             style={parseInlineStyle(
-              'pointer-events:auto;display:flex;align-items:center;gap:16px;background:#18181b;border-radius:14px;padding:10px 10px 10px 20px;box-shadow:0 10px 34px rgba(0,0,0,.28);',
+              'pointer-events:auto;display:flex;align-items:center;gap:16px;background:#1C1A17;border-radius:14px;padding:10px 10px 10px 20px;box-shadow:0 10px 34px rgba(28,26,23,.28);',
             )}
           >
             <span style={parseInlineStyle('color:#fff;font-size:13px;font-weight:600;')}>
-              {v.cmpMaxHint && <span style={parseInlineStyle('color:#8a8a94;')}>Compare up to 3 · </span>}
+              {v.cmpMaxHint && <span style={parseInlineStyle('color:#9C9189;')}>Compare up to 3 · </span>}
               {v.cmpSelLabel}
             </span>
-            <button onClick={v.clearCompare} style={parseInlineStyle('background:none;border:none;color:#a1a1aa;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;')}>
+            <button onClick={v.clearCompare} style={parseInlineStyle('background:none;border:none;color:#9C9189;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;')}>
               Clear
             </button>
             <button
               onClick={v.openCompare}
-              style={parseInlineStyle('background:#1e3a8a;color:#fff;border:none;border-radius:10px;padding:11px 22px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;')}
+              style={parseInlineStyle('background:#0F766E;color:#fff;border:none;border-radius:10px;padding:11px 22px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;')}
             >
               {v.cmpBarLabel}
             </button>

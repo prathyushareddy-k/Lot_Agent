@@ -106,6 +106,12 @@ export interface ScanItem {
   textStyle: string;
 }
 
+export interface MustHaveChip {
+  style: string;
+  icon: string;
+  label: string;
+}
+
 export interface CarView {
   id: string;
   name: string;
@@ -124,6 +130,11 @@ export interface CarView {
   fitBg: string;
   dealStyle: string;
   dealLabel: string;
+  dealDelta?: string;
+  dealComps?: string;
+  hasMustHaveChips: boolean;
+  mustHaveChips: MustHaveChip[];
+  tradeoff?: string;
   expanded: boolean;
   caret: string;
   onToggle: () => void;
