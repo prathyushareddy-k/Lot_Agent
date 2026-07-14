@@ -206,8 +206,8 @@ export function useAppView(): AppView {
 
   function optStyle(active: boolean) {
     return active
-      ? 'text-align:left;padding:16px 18px;border-radius:12px;border:2px solid #1e3a8a;background:#eef3fb;cursor:pointer;font-family:inherit;'
-      : 'text-align:left;padding:16px 18px;border-radius:12px;border:2px solid #e4e4e7;background:#fff;cursor:pointer;font-family:inherit;';
+      ? 'text-align:left;padding:16px 18px;border-radius:12px;border:2px solid #0F766E;background:#E6F5F2;cursor:pointer;font-family:inherit;'
+      : 'text-align:left;padding:16px 18px;border-radius:12px;border:2px solid #E7E2D9;background:#fff;cursor:pointer;font-family:inherit;';
   }
 
   // ---- renderVals() ----
@@ -238,9 +238,9 @@ export function useAppView(): AppView {
       style: optStyle(checked),
       boxStyle:
         'flex-shrink:0;width:22px;height:22px;border-radius:6px;margin-top:1px;display:flex;align-items:center;justify-content:center;border:2px solid ' +
-        (checked ? '#1e3a8a' : '#c4c4cc') +
+        (checked ? '#0F766E' : '#C9C4BB') +
         ';background:' +
-        (checked ? '#1e3a8a' : '#fff') +
+        (checked ? '#0F766E' : '#fff') +
         ';color:#fff;font-size:13px;font-weight:800;',
       onClick: () => toggleUsage(val),
     };
@@ -281,8 +281,8 @@ export function useAppView(): AppView {
     label,
     onClick: () => toggleMust(k),
     style:
-      'border-radius:99px;padding:11px 18px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;' +
-      (st.mustHaves[k] ? 'background:#1e3a8a;color:#fff;border:2px solid #1e3a8a;' : 'background:#fff;color:#52525b;border:2px solid #e4e4e7;'),
+      'border-radius:999px;padding:12px 18px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;' +
+      (st.mustHaves[k] ? 'background:#0F766E;color:#fff;border:2px solid #0F766E;' : 'background:#fff;color:#6B6459;border:2px solid #E7E2D9;'),
   }));
 
   // summary
@@ -332,8 +332,8 @@ export function useAppView(): AppView {
       mark: done ? '✓' : '',
       dotStyle:
         'width:20px;height:20px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;' +
-        (done ? 'background:#1e3a8a;color:#fff;' : 'background:#f0f0f1;color:#a1a1aa;border:2px solid #e4e4e7;'),
-      textStyle: 'font-size:14px;font-weight:600;color:' + (done ? '#27272a' : active ? '#1e3a8a' : '#a1a1aa') + ';',
+        (done ? 'background:#2563EB;color:#fff;' : 'background:#F5F1EB;color:#9C9189;border:2px solid #E7E2D9;'),
+      textStyle: 'font-size:14px;font-weight:600;color:' + (done ? '#1C1A17' : active ? '#2563EB' : '#9C9189') + ';',
     };
   });
 
@@ -341,29 +341,29 @@ export function useAppView(): AppView {
   const fitStyle = (f: number) => {
     let bg, col;
     if (f >= 85) {
-      bg = '#1e3a8a';
+      bg = '#0F766E';
       col = '#fff';
     } else if (f >= 75) {
-      bg = '#dbe4f5';
-      col = '#1e3a8a';
+      bg = '#A7D9D3';
+      col = '#115E59';
     } else {
-      bg = '#e4e4e7';
-      col = '#3f3f46';
+      bg = '#E7E2D9';
+      col = '#6B6459';
     }
     return 'width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;background:' + bg + ';color:' + col + ';';
   };
   const fitBg = (f: number) => {
-    if (f >= 85) return 'background:#1e3a8a;color:#fff;';
-    if (f >= 75) return 'background:#dbe4f5;color:#1e3a8a;';
-    return 'background:#e4e4e7;color:#3f3f46;';
+    if (f >= 85) return 'background:#0F766E;color:#fff;';
+    if (f >= 75) return 'background:#A7D9D3;color:#115E59;';
+    return 'background:#E7E2D9;color:#6B6459;';
   };
   const dealStyle = (r: string) => {
     const map: Record<string, string> = {
-      Good: 'background:#eaf6ef;color:#1e8a5b;border:1px solid #bfe3cf;',
-      Fair: 'background:#f4f4f5;color:#52525b;border:1px solid #e4e4e7;',
-      Over: 'background:#fbedea;color:#b4533a;border:1px solid #f0c8bd;',
+      Good: 'background:#DCFCE7;color:#15803D;border:1px solid #BBF7D0;',
+      Fair: 'background:#F5F1EB;color:#6B6459;border:1px solid #E7E2D9;',
+      Over: 'background:#FEE2E2;color:#B91C1C;border:1px solid #FECACA;',
     };
-    return 'border-radius:99px;padding:4px 11px;font-size:12px;font-weight:700;white-space:nowrap;' + map[r];
+    return 'border-radius:999px;padding:4px 11px;font-size:12px;font-weight:700;white-space:nowrap;' + map[r];
   };
   const dealLabel: Record<string, string> = { Good: 'Good deal', Fair: 'Fair price', Over: 'Overpriced' };
   const carData = [
@@ -371,33 +371,53 @@ export function useAppView(): AppView {
       id: 'crv', name: '2021 Honda CR-V EX', miles: '38k mi', distance: '14 mi away', fit: 92, deal: 'Good', tco: '$430', otd: '$26,860', condition: 'Certified pre-owned', fuelType: 'Gas', dealer: 'Peninsula Honda',
       pros: ['Bulletproof reliability record', 'Roomy for car seats + gear', 'Holds value in 3 years'], cons: ['Not exciting to drive'],
       why: "Honestly, this is the safe, smart pick for you. You told me reliability matters most — the CR-V is about as dependable as it gets, and this one is a single-owner car priced below comparable listings. The only real catch is fuel cost runs a touch over your target, but on total cost it still comes out ahead.",
+      dealDelta: '−$1,100', dealComps: '12 comps',
+      mustHaveKeys: ['awd', 'carplay', 'backup'],
+      tradeoff: 'Fuel runs about $40/mo over your target — the only real knock.',
     },
     {
       id: 'rav4', name: '2020 Toyota RAV4 LE', miles: '41k mi', distance: '22 mi away', fit: 88, deal: 'Fair', tco: '$455', otd: '$25,400', condition: 'Used', fuelType: 'Hybrid', dealer: 'Bay City Motors',
       pros: ['Top-tier reliability', 'Great mpg for the class'], cons: ['Priced a bit high right now', 'Base trim feels plain'],
       why: "Every bit as dependable as the CR-V and a little better on gas. The catch is timing — RAV4 prices are running hot this month, so you'd pay closer to fair value than a steal. Worth watching for a price drop.",
+      dealDelta: '+$200', dealComps: '11 comps',
+      mustHaveKeys: ['awd', 'carplay'],
+      tradeoff: "Priced hot this month, so you'd pay near full value, not a steal.",
     },
     {
       id: 'cx5', name: '2019 Mazda CX-5 Touring', miles: '46k mi', distance: '31 mi away', fit: 81, deal: 'Good', tco: '$390', otd: '$21,400', condition: 'Used', fuelType: 'Gas', dealer: 'Private seller · Oakland',
       pros: ['Most fun to drive here', 'Nicer cabin than rivals', 'Lowest monthly cost'], cons: ['Tighter rear seat', 'Slightly thirstier'],
       why: "If driving feel matters to you at all, this is the one to test-drive. It's the cheapest to run on this list and the interior punches above its price. It scores a bit lower only because reliability — your top priority — is good but not Toyota/Honda great.",
+      dealDelta: '−$800', dealComps: '9 comps',
+      mustHaveKeys: ['awd', 'carplay'],
+      tradeoff: 'Reliability is good but not quite Toyota/Honda bulletproof.',
     },
     {
       id: 'forester', name: '2018 Subaru Forester', miles: '52k mi', distance: '19 mi away', fit: 76, deal: 'Over', tco: '$470', otd: '$24,200', condition: 'Certified pre-owned', fuelType: 'Gas', dealer: 'Golden Gate Subaru',
       pros: ['Standard AWD', 'Excellent visibility'], cons: ['This listing is above market', 'Older infotainment'],
       why: "Great all-weather pick with standard AWD and famously easy to see out of. I'm flagging it as overpriced though — this specific listing sits above what comparable Foresters are selling for, so I'd only pursue it if they come down.",
+      dealDelta: '+$900', dealComps: '8 comps',
+      mustHaveKeys: ['awd'],
+      tradeoff: 'This listing sits above market — worth it only if the price drops.',
     },
     {
       id: 'niroev', name: '2024 Kia Niro EV Wind', miles: '12 mi (new)', distance: '17 mi away', fit: 84, deal: 'Fair', tco: '$415', otd: '$34,600', condition: 'New', fuelType: 'Electric', dealer: 'Serramonte Kia',
       pros: ['Cheapest to run — home charging', 'Full factory warranty', 'No maintenance for years'], cons: ['~250 mi range', 'Public charging adds up'],
       why: "If you can charge at home, this is the quiet dark-horse pick. It's brand new with a full warranty, so there's nothing to worry about for years, and your monthly running cost drops well below the gas cars. The only real question is range — 250 miles is plenty for your commute, less so for long road trips.",
+      dealDelta: 'at market', dealComps: '6 comps',
+      mustHaveKeys: ['carplay', 'backup'],
+      tradeoff: undefined as string | undefined,
     },
     {
       id: 'civic', name: '2024 Honda Civic Sport', miles: '8 mi (new)', distance: '11 mi away', fit: 83, deal: 'Good', tco: '$425', otd: '$28,400', condition: 'New', fuelType: 'Gas', dealer: 'Peninsula Honda',
       pros: ['Brand-new, nothing to fix', 'Great mpg for a gas car', 'Holds value extremely well'], cons: ['Smaller than the SUVs', 'Firm ride on rough roads'],
       why: "The safe brand-new option. You get Honda reliability with zero miles and a full warranty, priced right at what comparable new Civics are going for nearby. It's smaller than the crossovers on your list, so it comes down to whether you need the extra cargo room or would rather have something fresh.",
+      dealDelta: '−$200', dealComps: '14 comps',
+      mustHaveKeys: ['carplay', 'backup'],
+      tradeoff: undefined as string | undefined,
     },
   ];
+  const mhLabels: Record<string, string> = { awd: 'AWD', carplay: 'CarPlay', backup: 'Backup cam', mpg: '35+ mpg', thirdrow: 'Third row', manual: 'Manual' };
+  const chipStyle = 'display:inline-flex;align-items:center;gap:4px;background:#E6F5F2;border:1px solid #A7D9D3;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700;color:#115E59;';
   const mkSvg = (children: string[]) =>
     createElement(
       'svg',
@@ -423,12 +443,18 @@ export function useAppView(): AppView {
     const isSaved = st.saved.includes(c.id);
     const inCmp = st.compareSet.includes(c.id);
     const cmpFull = st.compareSet.length >= 3 && !inCmp;
+    const chips = c.mustHaveKeys.map(k => ({ style: chipStyle, icon: '✓ ', label: mhLabels[k] || k }));
     return {
       ...c,
       deal: undefined as unknown as string,
       tco: c.tco + '/mo',
       fitStyle: fitStyle(c.fit), fitBg: fitBg(c.fit),
       dealStyle: dealStyle(c.deal), dealLabel: dealLabel[c.deal],
+      dealDelta: c.dealDelta,
+      dealComps: c.dealComps,
+      hasMustHaveChips: chips.length > 0,
+      mustHaveChips: chips,
+      tradeoff: c.tradeoff,
       expanded: st.expanded === c.id, caret: st.expanded === c.id ? '▲' : '▼',
       onToggle: () => toggleExpand(c.id),
       slotId: 'car-' + c.id, slotPlaceholder: 'Drop a ' + c.name + ' photo', slotSrc: carSrc(c.id),
@@ -437,13 +463,13 @@ export function useAppView(): AppView {
       // eslint-disable-next-line react-hooks/refs -- toggleSave is only ever invoked from an onClick handler, never during render
       onSave: () => toggleSave(c.id),
       heartGlyph: isSaved ? '♥' : '♡',
-      heartStyle: 'background:none;border:none;cursor:pointer;font-size:22px;line-height:1;padding:2px 6px;font-family:inherit;color:' + (isSaved ? '#1e3a8a' : '#a1a1aa') + ';',
+      heartStyle: 'background:none;border:none;cursor:pointer;font-size:22px;line-height:1;padding:2px 6px;font-family:inherit;color:' + (isSaved ? '#0F766E' : '#9C9189') + ';',
       showSavedConfirm: st.justSaved === c.id,
       inCompare: inCmp,
       compareMark: inCmp ? '✓' : '',
       onCompare: () => toggleCompare(c.id),
-      compareStyle: 'display:inline-flex;align-items:center;gap:8px;background:none;border:none;font-family:inherit;font-size:13px;font-weight:600;color:' + (inCmp ? '#1e3a8a' : '#71717a') + ';' + (cmpFull ? 'opacity:.4;cursor:not-allowed;pointer-events:none;' : 'cursor:pointer;'),
-      compareBoxStyle: 'width:18px;height:18px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;border:2px solid ' + (inCmp ? '#1e3a8a' : '#c9d1da') + ';background:' + (inCmp ? '#1e3a8a' : '#fff') + ';',
+      compareStyle: 'display:inline-flex;align-items:center;gap:8px;background:none;border:none;font-family:inherit;font-size:13px;font-weight:600;color:' + (inCmp ? '#0F766E' : '#9C9189') + ';' + (cmpFull ? 'opacity:.4;cursor:not-allowed;pointer-events:none;' : 'cursor:pointer;'),
+      compareBoxStyle: 'width:18px;height:18px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;border:2px solid ' + (inCmp ? '#0F766E' : '#C9C4BB') + ';background:' + (inCmp ? '#0F766E' : '#fff') + ';',
     };
   });
 
@@ -460,7 +486,7 @@ export function useAppView(): AppView {
     { value: 'price', label: 'Sort: Lowest price' },
     { value: 'distance', label: 'Sort: Nearest' },
   ];
-  const sortSelectStyle = 'appearance:none;-webkit-appearance:none;background:#fff;border:1px solid #e4e4e7;border-radius:9px;padding:9px 30px 9px 14px;font-size:13px;font-weight:600;font-family:inherit;color:#52525b;cursor:pointer;outline:none;';
+  const sortSelectStyle = 'appearance:none;-webkit-appearance:none;background:#fff;border:1px solid #E7E2D9;border-radius:9px;padding:9px 30px 9px 14px;font-size:13px;font-weight:600;font-family:inherit;color:#6B6459;cursor:pointer;outline:none;';
 
   const savedCount = st.saved.length;
   let shortlistCars = st.savedFilter === 'saved' ? cars.filter(c => c.saved) : cars;
@@ -478,8 +504,8 @@ export function useAppView(): AppView {
     { value: 'Hybrid', label: 'Hybrid' }, { value: 'Electric', label: 'Electric' },
   ];
   const selBase = 'appearance:none;-webkit-appearance:none;background:#fff;border-radius:9px;padding:9px 30px 9px 14px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;outline:none;';
-  const conditionSelectStyle = selBase + 'border:1px solid ' + (st.conditionFilter !== 'all' ? '#1e3a8a' : '#e4e4e7') + ';color:' + (st.conditionFilter !== 'all' ? '#1e3a8a' : '#52525b') + ';';
-  const fuelSelectStyle = selBase + 'border:1px solid ' + (st.fuelFilter !== 'all' ? '#1e3a8a' : '#e4e4e7') + ';color:' + (st.fuelFilter !== 'all' ? '#1e3a8a' : '#52525b') + ';';
+  const conditionSelectStyle = selBase + 'border:1px solid ' + (st.conditionFilter !== 'all' ? '#0F766E' : '#E7E2D9') + ';color:' + (st.conditionFilter !== 'all' ? '#0F766E' : '#6B6459') + ';';
+  const fuelSelectStyle = selBase + 'border:1px solid ' + (st.fuelFilter !== 'all' ? '#0F766E' : '#E7E2D9') + ';color:' + (st.fuelFilter !== 'all' ? '#0F766E' : '#6B6459') + ';';
   const cmpCount = st.compareSet.length;
   const segBase = 'border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;';
 
@@ -488,8 +514,8 @@ export function useAppView(): AppView {
   const monthlyNum = (c: (typeof carData)[number]) => +String(c.tco).replace(/[^0-9]/g, '');
   const maxFit = cmp.length ? Math.max(...cmp.map(c => c.fit)) : 0;
   const minCost = cmp.length ? Math.min(...cmp.map(monthlyNum)) : 0;
-  const cellBase = 'padding:16px;display:flex;flex-direction:column;gap:8px;align-items:flex-start;justify-content:center;border-bottom:1px solid #f0f0f1;border-left:1px solid #f6f6f7;';
-  const winStyle = 'border-left:3px solid #1e3a8a;background:#f7f9fd;';
+  const cellBase = 'padding:16px;display:flex;flex-direction:column;gap:8px;align-items:flex-start;justify-content:center;border-bottom:1px solid #F5F1EB;border-left:1px solid #F5F1EB;';
+  const winStyle = 'border-left:3px solid #0F766E;background:#F0FAF9;';
   const tradeoffs: Record<string, string> = {
     crv: 'Fuel runs about $40/mo over your target — the only real knock.',
     rav4: 'Priced hot this month, so you’d pay near full value, not a steal.',
@@ -523,17 +549,17 @@ export function useAppView(): AppView {
       onClick: () => go('packet'),
       style: cellBase + (best ? winStyle : ''),
       btnStyle: 'width:100%;border-radius:10px;padding:12px 14px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;line-height:1.3;' +
-        (best ? 'background:#1e3a8a;color:#fff;border:none;box-shadow:0 2px 8px rgba(30,58,138,.22);' : 'background:#fff;color:#1e3a8a;border:1px solid #d8e2f4;'),
+        (best ? 'background:#0F766E;color:#fff;border:none;box-shadow:0 2px 8px rgba(15,118,110,.22);' : 'background:#fff;color:#0F766E;border:1px solid #A7D9D3;'),
     };
   });
   const detailSaved = st.saved.includes('crv');
 
   // detail fit breakdown
   const fitBreak = [
-    { label: 'Reliability', note: 'Excellent', pct: '94%', color: '#1e3a8a' },
-    { label: 'Resale value', note: 'Very strong', pct: '88%', color: '#1e3a8a' },
-    { label: 'Running cost', note: 'Fuel ~$40/mo over target', pct: '62%', color: '#9aa7c4' },
-    { label: 'Performance & fun', note: 'Adequate, not sporty', pct: '55%', color: '#9aa7c4' },
+    { label: 'Reliability', note: 'Excellent', pct: '94%', color: '#0F766E' },
+    { label: 'Resale value', note: 'Very strong', pct: '88%', color: '#0F766E' },
+    { label: 'Running cost', note: 'Fuel ~$40/mo over target', pct: '62%', color: '#A7D9D3' },
+    { label: 'Performance & fun', note: 'Adequate, not sporty', pct: '55%', color: '#A7D9D3' },
   ];
   const specs = [
     { k: 'Condition', v: 'Certified pre-owned' }, { k: 'Fuel type', v: 'Gas' },
@@ -646,24 +672,24 @@ export function useAppView(): AppView {
   const outreach = activePacket.outreach;
 
   // packet history list
-  const packetToneMap: Record<string, string> = { green: 'background:#eaf6ef;color:#1e8a5b;', blue: 'background:#eef3fb;color:#1e3a8a;', gray: 'background:#f4f4f5;color:#71717a;' };
+  const packetToneMap: Record<string, string> = { green: 'background:#DCFCE7;color:#15803D;', blue: 'background:#E8F0FE;color:#2563EB;', gray: 'background:#F5F1EB;color:#9C9189;' };
   const packetOrder = ['crv', 'rav4', 'cx5'];
   const packetList = packetOrder.map(id => {
     const p = packetData[id];
     return {
       name: p.name, dealer: p.dealer, date: p.date, status: p.status, monthly: p.monthly, otd: p.otdTotal,
       slotId: 'car-' + id, slotSrc: carSrc(id), slotPlaceholder: 'Photo of ' + p.name,
-      statusStyle: 'border-radius:99px;padding:4px 11px;font-size:11px;font-weight:800;letter-spacing:.3px;white-space:nowrap;' + packetToneMap[p.statusTone],
+        statusStyle: 'border-radius:999px;padding:4px 11px;font-size:11px;font-weight:800;letter-spacing:.3px;white-space:nowrap;' + packetToneMap[p.statusTone],
       onOpen: () => openPacket(id, 'packets'),
     };
   });
 
   // alerts / notifications
   const toneMap: Record<string, string> = {
-    green: 'background:#eaf6ef;color:#1e8a5b;',
-    blue: 'background:#eef3fb;color:#1e3a8a;',
-    purple: 'background:#f0ecfa;color:#6b46c1;',
-    gray: 'background:#f4f4f5;color:#71717a;',
+    green: 'background:#DCFCE7;color:#15803D;',
+    blue: 'background:#E8F0FE;color:#2563EB;',
+    purple: 'background:#EDE9FE;color:#7C3AED;',
+    gray: 'background:#F5F1EB;color:#9C9189;',
   };
   const alertDefs: { id: string; type: string; tone: string; time: string; title: string; body: string; go: AppState['screen'] | null; cta: string | null }[] = [
     { id: 'a1', type: 'PRICE DROP', tone: 'green', time: '2 hours ago', title: 'Price dropped on the RAV4 LE', body: 'Asking price fell from $24,200 to $23,600 (−$600) on a car you saved. Still tracking as a Fair price.', go: 'detail', cta: 'View listing' },
@@ -674,7 +700,7 @@ export function useAppView(): AppView {
   const visibleAlerts = alertDefs.filter(a => !st.dismissedAlerts.includes(a.id));
   const alertList = visibleAlerts.map(a => ({
     type: a.type, time: a.time, title: a.title, body: a.body, cta: a.cta, hasCta: !!a.go,
-    tagStyle: 'border-radius:6px;padding:3px 9px;font-size:10.5px;font-weight:800;letter-spacing:.5px;' + toneMap[a.tone],
+      tagStyle: 'border-radius:6px;padding:3px 9px;font-size:10.5px;font-weight:800;letter-spacing:.5px;' + toneMap[a.tone],
     bodyStyle: 'cursor:' + (a.go ? 'pointer' : 'default') + ';',
     // eslint-disable-next-line react-hooks/refs -- openAlert (via go) is only ever invoked from an onClick handler, never during render
     onOpen: () => openAlert(a.go),
@@ -686,12 +712,12 @@ export function useAppView(): AppView {
     alertsOpen: st.alertsOpen, toggleAlerts: () => toggleAlerts(), closeAlerts: () => closeAlerts(),
     clearAllAlerts: () => clearAllAlerts(),
     alertList, alertCount, hasAlerts: alertCount > 0, noAlerts: alertCount === 0,
-    bellBtnStyle: 'position:relative;background:' + (st.alertsOpen ? '#eef3fb' : '#fff') + ';border:1px solid ' + (st.alertsOpen ? '#c9d6ef' : '#e4e4e7') + ';border-radius:10px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:' + (st.alertsOpen ? '#1e3a8a' : '#52525b') + ';font-family:inherit;',
+    bellBtnStyle: 'position:relative;background:' + (st.alertsOpen ? '#E6F5F2' : '#fff') + ';border:1px solid ' + (st.alertsOpen ? '#A7D9D3' : '#E7E2D9') + ';border-radius:10px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:' + (st.alertsOpen ? '#0F766E' : '#6B6459') + ';font-family:inherit;',
     sLanding: s === 'landing', sIntake: s === 'intake', sScanning: s === 'scanning',
     sShortlist: s === 'shortlist', sReplan: s === 'replan', sDetail: s === 'detail',
     sPacket: s === 'packet', sPackets: s === 'packets', sComponents: s === 'components', sMobile: s === 'mobile',
     showNotes: st.showNotes, notesLabel: st.showNotes ? 'Notes: On' : 'Notes: Off',
-    notesBtnStyle: 'flex-shrink:0;border:1px solid ' + (st.showNotes ? '#d4a72c' : '#e4e4e7') + ';background:' + (st.showNotes ? '#fffbeb' : '#fff') + ';color:' + (st.showNotes ? '#a8801a' : '#a1a1aa') + ';border-radius:7px;padding:6px 11px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;',
+    notesBtnStyle: 'flex-shrink:0;border:1px solid ' + (st.showNotes ? '#D4A72C' : '#E7E2D9') + ';background:' + (st.showNotes ? '#FFFBEB' : '#fff') + ';color:' + (st.showNotes ? '#A8801A' : '#9C9189') + ';border-radius:7px;padding:6px 11px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;',
     toggleNotes: () => setState(p => ({ showNotes: !p.showNotes })),
 
     // nav helpers
@@ -732,12 +758,12 @@ export function useAppView(): AppView {
     },
     addCustomMust: () => addCustomMust(),
     canAddMust: st.newMust.trim().length > 0,
-    addBtnStyle: 'flex-shrink:0;border:none;border-radius:99px;padding:11px 18px;font-size:14px;font-weight:700;font-family:inherit;' + (st.newMust.trim().length > 0 ? 'background:#1e3a8a;color:#fff;cursor:pointer;' : 'background:#e4e4e7;color:#a1a1aa;cursor:not-allowed;'),
+    addBtnStyle: 'flex-shrink:0;border:none;border-radius:999px;padding:11px 18px;font-size:14px;font-weight:700;font-family:inherit;' + (st.newMust.trim().length > 0 ? 'background:#0F766E;color:#fff;cursor:pointer;' : 'background:#E7E2D9;color:#9C9189;cursor:not-allowed;'),
     radius: st.radius, zip: st.zip, onRadius: e => setState({ radius: +e.target.value }),
     isCash: st.budgetMode === 'cash', isMonthly: st.budgetMode === 'monthly',
     setCash: () => setState({ budgetMode: 'cash' }), setMonthly: () => setState({ budgetMode: 'monthly' }),
-    cashTabStyle: 'flex:1;border:none;border-radius:8px;padding:11px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;' + (st.budgetMode === 'cash' ? 'background:#fff;color:#1e3a8a;box-shadow:0 1px 3px rgba(0,0,0,.1);' : 'background:transparent;color:#71717a;'),
-    monthlyTabStyle: 'flex:1;border:none;border-radius:8px;padding:11px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;' + (st.budgetMode === 'monthly' ? 'background:#fff;color:#1e3a8a;box-shadow:0 1px 3px rgba(0,0,0,.1);' : 'background:transparent;color:#71717a;'),
+    cashTabStyle: 'flex:1;border:none;border-radius:8px;padding:11px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;' + (st.budgetMode === 'cash' ? 'background:#fff;color:#0F766E;box-shadow:0 1px 3px rgba(0,0,0,.1);' : 'background:transparent;color:#6B6459;'),
+    monthlyTabStyle: 'flex:1;border:none;border-radius:8px;padding:11px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;' + (st.budgetMode === 'monthly' ? 'background:#fff;color:#0F766E;box-shadow:0 1px 3px rgba(0,0,0,.1);' : 'background:transparent;color:#6B6459;'),
     cashTotal: st.cashTotal, cashLabel: usd(st.cashTotal), onCash: e => setState({ cashTotal: +e.target.value }),
     monthly: st.monthly, monthlyLabel: usd(st.monthly), onMonthly: e => setState({ monthly: +e.target.value }),
     down: st.down, downLabel: usd(st.down), onDown: e => setState({ down: +e.target.value }),
@@ -759,12 +785,12 @@ export function useAppView(): AppView {
     onFuelFilter: e => setState({ fuelFilter: e.target.value }),
     onClearFilters: () => setState({ conditionFilter: 'all', fuelFilter: 'all' }),
     onFilterAll: () => setSavedFilter('all'), onFilterSaved: () => setSavedFilter('saved'),
-    filterAllStyle: segBase + (st.savedFilter === 'all' ? 'background:#fff;color:#1e3a8a;box-shadow:0 1px 3px rgba(0,0,0,.1);' : 'background:transparent;color:#71717a;'),
-    filterSavedStyle: segBase + (st.savedFilter === 'saved' ? 'background:#fff;color:#1e3a8a;box-shadow:0 1px 3px rgba(0,0,0,.1);' : 'background:transparent;color:#71717a;'),
+    filterAllStyle: segBase + (st.savedFilter === 'all' ? 'background:#fff;color:#0F766E;box-shadow:0 1px 3px rgba(0,0,0,.1);' : 'background:transparent;color:#6B6459;'),
+    filterSavedStyle: segBase + (st.savedFilter === 'saved' ? 'background:#fff;color:#0F766E;box-shadow:0 1px 3px rgba(0,0,0,.1);' : 'background:transparent;color:#6B6459;'),
     cmpCount, showCmpBar: cmpCount >= 1 && s === 'shortlist', cmpBarLabel: 'Compare (' + cmpCount + ')', cmpSelLabel: cmpCount + ' selected', cmpMaxHint: cmpCount >= 3,
     openCompare: () => openCompare(), clearCompare: () => clearCompare(),
     detailSaved, detailHeartGlyph: detailSaved ? '♥' : '♡', onDetailSave: () => toggleSave('crv'), detailJustSaved: st.justSaved === 'crv',
-    detailHeartStyle: 'background:none;border:1px solid ' + (detailSaved ? '#1e3a8a' : '#e4e4e7') + ';border-radius:10px;cursor:pointer;font-size:20px;line-height:1;padding:8px 13px;font-family:inherit;color:' + (detailSaved ? '#1e3a8a' : '#a1a1aa') + ';',
+    detailHeartStyle: 'background:none;border:1px solid ' + (detailSaved ? '#0F766E' : '#E7E2D9') + ';border-radius:10px;cursor:pointer;font-size:20px;line-height:1;padding:8px 13px;font-family:inherit;color:' + (detailSaved ? '#0F766E' : '#9C9189') + ';',
     gridCols, compareCols, fitCells, dealCells, otdCells, costCells, tradeoffCells, specRows, recText, finalizeCells,
     cmpHasCars: cmp.length > 0, cmpEmpty: cmp.length === 0, cmpCountLabel: cmp.length,
     compareSpecsOpen: st.compareSpecsOpen, compareSpecsCaret: st.compareSpecsOpen ? '▲' : '▼', toggleCompareSpecs: () => setState(p => ({ compareSpecsOpen: !p.compareSpecsOpen })),
